@@ -10,6 +10,10 @@ header {
     text-align: center;
 }
 
+.container-fluid {
+    margin-top: 20px;
+}
+
 #pokemon-list {
     display: flex;
     flex-wrap: wrap;
@@ -26,6 +30,7 @@ header {
     width: 200px;
     text-align: center;
     transition: transform 0.2s;
+    cursor: pointer;
 }
 
 .pokemon-card:hover {
@@ -44,7 +49,20 @@ header {
     padding: 0.5rem 0;
 }
 
-.pokemon-card p {
+.pokemon-card .pokemon-stats {
+    display: flex;
+    justify-content: space-around;
+    padding: 0.5rem 0;
+}
+
+.modal-pokemon-img {
+    display: block;
+    margin: 0 auto;
+    max-width: 100%;
+}
+
+.modal-body p {
     margin: 0.5rem 0;
-    padding: 0 1rem;
+    font-size: 1rem;
+    text-align: center;
 }
