@@ -1,20 +1,40 @@
-require('dotenv').config();
-
-const path = require('node:path');
 const express = require('express');
-const router = require('./app/routers');
+const { sequelize, Pokemon } = require('./models');
+const seedDatabase = require('./seedDatabase');
+const indexRoutes = require('./router/index'); 
 
-const port = process.env.PORT || `4000`;
+const startServer = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('Connection to the database has been established successfully.');
 
-const app = express();
+    // Vérifiez s'il y a déjà des données dans la base de données
+    const pokemonCount = await Pokemon.count();
 
-app.set('view engine', 'template engine');
-app.set('views', './app/views');
+    if (pokemonCount === 0) {
+      await seedDatabase();
+    } else {
+      console.log('Database already seeded!');
+    }
 
-app.use(express.static(path.join(__dirname, './public')));
+    const app = express();
 
-app.use(router);
+    app.use('/', indexRoutes);
 
-app.listen(port, () => {
-    console.log(`Server ready: http://localhost:${port}`);
-});
+    app.get('/', (req, res) => {
+      res.send('Hello World!');
+    });
+
+    app.listen(3000, () => {
+      console.log('Server ready: http://localhost:3000');
+    });
+
+  } catch (error) {
+    console.error('Unable to connect to the database:', error);
+  }
+};
+
+startServer();
+
+
+

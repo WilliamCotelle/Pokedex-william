@@ -1,0 +1,33 @@
+# Tester la route pour obtenir tous les Pokémons
+GET http://localhost:3000/api/pokemons
+Accept: application/json
+
+###
+
+# Tester la route pour obtenir un Pokémon par ID
+GET http://localhost:3000/api/pokemons/7
+Accept: application/json
+
+###
+
+# Tester la route pour obtenir tous les Types
+GET http://localhost:3000/api/types
+Accept: application/json
+
+###
+
+# Tester la route pour obtenir les Pokémons par Type
+GET http://localhost:3000/api/types/1/pokemons
+Accept: application/json
+
+###
+
+# Tester la route pour obtenir toutes les Équipes
+GET http://localhost:3000/api/teams
+Accept: application/json
+
+###
+
+# Tester la route pour obtenir une Équipe par ID
+GET http://localhost:3000/api/teams/1
+Accept: application/json
