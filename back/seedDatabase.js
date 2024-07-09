@@ -1,4 +1,4 @@
-const { sequelize, Type, Pokemon, PokemonType } = require('./models');
+const { sequelize, Type, Pokemon, PokemonType, Team } = require('./models');
 
 const seedDatabase = async () => {
   try {
@@ -416,6 +416,17 @@ const seedDatabase = async () => {
     for (const pokemonType of pokemonTypes) {
       await PokemonType.create(pokemonType);
     }
+
+    const teams = [
+      { name: 'La Team Rocket', description: 'une organisation criminelle dans le monde Pokémon, dirigée par Giovanni. Leur objectif est de capturer des Pokémon pour des gains financiers et pour aider Giovanni à réaliser ses ambitions de domination.' },
+      { name: 'Team Ash', description: 'L\'équipe de Pokémon de Sacha, composée de Pikachu et d\'autres Pokémon qu\'il capture lors de ses voyages pour devenir Maître Pokémon.' },
+  { name: 'Team Plasma', description: 'Une organisation qui prône la libération des Pokémon des mains des dresseurs, affirmant que les Pokémon doivent être libres.' }
+    ];
+
+    for (const team of teams) {
+      await Team.create(team);
+    }
+    
 
     console.log('Database seeded!');
   } catch (error) {
