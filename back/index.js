@@ -18,6 +18,8 @@ const startServer = async () => {
     }
 
     const app = express();
+    
+    app.use(express.static('front'));
 
     app.use('/', indexRoutes);
 
