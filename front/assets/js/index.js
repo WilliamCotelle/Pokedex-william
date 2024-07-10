@@ -130,17 +130,29 @@ const closeTeamModal = () => {
 };
 
 // Fonction pour afficher les détails de l'équipe dans une modal
-const openTeamDetailModal = (teamName, teamDescription) => {
-    const modalTitle = document.getElementById('teamDetailModalLabel');
-    const modalDescription = document.getElementById('teamDetailDescription');
+const openTeamDetailModal = (teamId) => {
+    fetchTeamDetails(teamId).then(team => {
+        const modalTitle = document.getElementById('teamDetailModalLabel');
+        const modalDescription = document.getElementById('teamDetailDescription');
 
-    modalTitle.textContent = teamName;
-    modalDescription.textContent = teamDescription;
+        modalTitle.textContent = team.name;
+        modalDescription.textContent = team.description;
 
-    showModal('teamDetailModal');
+        showModal('teamDetailModal');
+    }).catch(error => {
+        console.log('Error fetching team details:', error);
+    });
 };
 
-// Fonction pour ajouter une nouvelle équipe
+// Fonction pour sélectionner les détails d'une équipe
+const fetchTeamDetails = async (teamId) => {
+    const response = await fetch(`http://localhost:3000/api/teams/${teamId}`);
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+};
+
 // Fonction pour ajouter une nouvelle équipe
 const addTeam = async (teamName, teamDescription) => {
     try {
@@ -157,13 +169,14 @@ const addTeam = async (teamName, teamDescription) => {
 
         const teamCard = document.createElement('div');
         teamCard.classList.add('team-card');
+        teamCard.dataset.id = newTeam.id;
 
         const teamNameElement = document.createElement('h5');
         teamNameElement.classList.add('team-name');
         teamNameElement.textContent = newTeam.name;
 
         teamCard.appendChild(teamNameElement);
-        teamCard.addEventListener('click', () => openTeamDetailModal(newTeam.name, newTeam.description));
+        teamCard.addEventListener('click', () => openTeamDetailModal(newTeam.id));
         teamList.appendChild(teamCard);
 
         return newTeam;
@@ -171,6 +184,7 @@ const addTeam = async (teamName, teamDescription) => {
         console.log('Error adding team:', error);
     }
 };
+
 
 // Fonction pour gérer la soumission du formulaire de création d'équipe
 const handleTeamFormSubmit = async (event) => {
@@ -208,6 +222,7 @@ const displayTeams = (teams) => {
         teamCard.dataset.id = team.id;
 
         const teamName = document.createElement('h5');
+        teamName.classList.add('team-name');
         teamName.textContent = team.name;
 
         const pokemonList = document.createElement('div');
@@ -215,9 +230,11 @@ const displayTeams = (teams) => {
 
         teamCard.appendChild(teamName);
         teamCard.appendChild(pokemonList);
+        teamCard.addEventListener('click', () => openTeamDetailModal(team.id));
         teamList.appendChild(teamCard);
     }
-}
+};
+
 
 // Fonction pour récupérer et afficher les équipes
 const fetchAndDisplayTeams = async () => {

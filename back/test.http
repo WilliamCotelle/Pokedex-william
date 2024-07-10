@@ -31,3 +31,12 @@ Accept: application/json
 # Tester la route pour obtenir une Équipe par ID
 GET http://localhost:3000/api/teams/1
 Accept: application/json
+
+### Ajouter une nouvelle équipe
+POST http://localhost:3000/api/teams
+Content-Type: application/json
+
+{
+  "name": "Team de William",
+  "description": "La meilleur team"
+}

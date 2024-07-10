@@ -14,4 +14,14 @@ router.get('/:id', async (req, res) => {
   res.json(team);
 });
 
+router.post('/', async (req, res) => {
+  const { name, description } = req.body;
+  try {
+    const newTeam = await Team.create({ name, description });
+    res.status(201).json(newTeam);
+  } catch (error) {
+    res.status(500).json({ error: 'Erreur lors de la création de l\'équipe' });
+  }
+});
+
 module.exports = router;
