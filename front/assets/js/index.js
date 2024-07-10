@@ -24,16 +24,14 @@ function createPokemonCardElem(pokemonData) {
     pokemonName.classList.add('title', 'is-4');
     pokemonName.textContent = pokemonData.name;
 
-    const pokemonStats = document.createElement('div');
-    pokemonStats.classList.add('pokemon-stats');
-    pokemonStats.innerHTML = `
-        <span>HP: ${pokemonData.hp}</span>
-        <span>ATK: ${pokemonData.atk}</span>
-    `;
+
+    const pokemonNumberPokedex = document.createElement('span');
+    pokemonNumberPokedex.classList.add('pokemon-number');
+    pokemonNumberPokedex.textContent = `N°${pokemonData.id}`;
 
     pokemonCard.appendChild(pokemonImage);
     pokemonCard.appendChild(pokemonName);
-    pokemonCard.appendChild(pokemonStats);
+    pokemonCard.appendChild(pokemonNumberPokedex);
     pokemonCard.dataset.id = pokemonData.id;
     return pokemonCard;
 }
@@ -68,10 +66,10 @@ const updateModalContent = (pokemon) => {
 
     modalTitle.textContent = pokemon.name;
 
-    // Clear previous content
+    // vider le contenu
     modalBody.innerHTML = '';
 
-    // Create and append new content
+    // ajouter le contenu
     const pokemonImg = document.createElement('img');
     pokemonImg.src = `./assets/img/${pokemon.id}.webp`;
     pokemonImg.alt = pokemon.name;
@@ -126,19 +124,117 @@ const openAddTeamModal = () => {
     showModal('teamModal');
 };
 
-// Fonction pour fermer la modal des pokémons
-const closePokemonModal = () => {
-    closeModal('pokemonModal');
-};
-
 // Fonction pour fermer la modal des équipes
 const closeTeamModal = () => {
-    closeModal('teamModal');
+    closeModal('teamModal', 'teamDetailModal');
 };
+
+// Fonction pour afficher les détails de l'équipe dans une modal
+const openTeamDetailModal = (teamName, teamDescription) => {
+    const modalTitle = document.getElementById('teamDetailModalLabel');
+    const modalDescription = document.getElementById('teamDetailDescription');
+
+    modalTitle.textContent = teamName;
+    modalDescription.textContent = teamDescription;
+
+    showModal('teamDetailModal');
+};
+
+// Fonction pour ajouter une nouvelle équipe
+// Fonction pour ajouter une nouvelle équipe
+const addTeam = async (teamName, teamDescription) => {
+    try {
+        const response = await fetch('http://localhost:3000/api/teams', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: teamName, description: teamDescription })
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const newTeam = await response.json();
+        const teamList = document.getElementById('team-list');
+
+        const teamCard = document.createElement('div');
+        teamCard.classList.add('team-card');
+
+        const teamNameElement = document.createElement('h5');
+        teamNameElement.classList.add('team-name');
+        teamNameElement.textContent = newTeam.name;
+
+        teamCard.appendChild(teamNameElement);
+        teamCard.addEventListener('click', () => openTeamDetailModal(newTeam.name, newTeam.description));
+        teamList.appendChild(teamCard);
+
+        return newTeam;
+    } catch (error) {
+        console.log('Error adding team:', error);
+    }
+};
+
+// Fonction pour gérer la soumission du formulaire de création d'équipe
+const handleTeamFormSubmit = async (event) => {
+    event.preventDefault();
+    const teamName = document.getElementById('teamName').value;
+    const teamDescription = document.getElementById('teamDescription').value;
+    await addTeam(teamName, teamDescription);
+    closeTeamModal();
+    document.getElementById('teamForm').reset();
+};
+//écouteur d'événement pour le formulaire de création d'équipe
+document.getElementById('teamForm').addEventListener('submit', handleTeamFormSubmit);
+
+// Fonction pour récupérer les équipes depuis l'API
+const getTeams = async () => {
+    try {
+        const response = await fetch('http://localhost:3000/api/teams');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.log('Error fetching teams:', error);
+    }
+}
+
+// Fonction pour afficher les équipes dans la liste
+const displayTeams = (teams) => {
+    const teamList = document.getElementById('team-list');
+    teamList.innerHTML = '';
+    for (const team of teams) {
+        const teamCard = document.createElement('div');
+        teamCard.classList.add('team-card');
+        teamCard.dataset.id = team.id;
+
+        const teamName = document.createElement('h5');
+        teamName.textContent = team.name;
+
+        const pokemonList = document.createElement('div');
+        pokemonList.classList.add('team-pokemon-list');
+
+        teamCard.appendChild(teamName);
+        teamCard.appendChild(pokemonList);
+        teamList.appendChild(teamCard);
+    }
+}
+
+// Fonction pour récupérer et afficher les équipes
+const fetchAndDisplayTeams = async () => {
+    try {
+        const teams = await getTeams();
+        displayTeams(teams);
+    } catch (error) {
+        console.log('Error displaying teams:', error);
+    }
+}
+
+
 
 // Attendre que le document soit prêt
 document.addEventListener("DOMContentLoaded", () => {
     fetchAndDisplayPokemons();
+    fetchAndDisplayTeams();
 
     // Écouteur d'événements pour les cartes de pokémon
     document.addEventListener('click', (event) => {
@@ -162,4 +258,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
+
+
+
 
