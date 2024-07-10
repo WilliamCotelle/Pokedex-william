@@ -24,7 +24,7 @@
     <div class="container is-fluid">
         <div class="columns">
             <aside class="column is-one-quarter">
-                <h5 class="title is-5">TEAMS</h5>
+                <h5 class="title is-5 sidebar-heading">TEAMS</h5>
                 <ul id="team-list">
                     <!-- Les équipes vont être ajoutées ici dynamiquement -->
                 </ul>
@@ -42,84 +42,95 @@
     <!-- Modals -->
     <div class="modal" id="pokemonModal">
         <div class="modal-background"></div>
-        <div class="modal-card">
+        <div class="modal-card modal-pokemon-card">
             <header class="modal-card-head">
                 <p class="modal-card-title" id="pokemonModalLabel">Pokemon Details</p>
                 <button class="delete" aria-label="close" onclick="closePokemonModal()"></button>
             </header>
             <section class="modal-card-body">
-                <!-- Contenu de la modal pour les détails des pokémons -->
+                <div class="pokemon-detail-header">
+                    <img id="pokemonImage" class="pokemon-image" src="" alt="Pokemon Image">
+                    <div class="pokemon-basic-info">
+                        <h2 id="pokemonName">Bulbasaur</h2>
+                        <!-- si on veut ajouter poid type ect ici -->
+                    </div>
+                </div>
+                <div class="pokemon-stats">
+                    <h3>Stats</h3>
+                    <div class="stat">
+                        <span>HP</span>
+                        <div class="stat-bar">
+                            <div class="stat-value" id="pokemonHp"></div>
+                        </div>
+                        <span id="pokemonHpValue"></span>
+                    </div>
+                    <div class="stat">
+                        <span>Attack</span>
+                        <div class="stat-bar">
+                            <div class="stat-value" id="pokemonAtk"></div>
+                        </div>
+                        <span id="pokemonAtkValue"></span>
+                    </div>
+                    <!-- Repeat for other stats: Defense, Special Attack, Special Defense, Speed -->
+                </div>
+            </section>
+        </div>
+    </div>
+    
+
+    <div class="modal" id="teamModal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title" id="teamModalLabel">Ajouter une team</p>
+                <button class="delete" aria-label="close" onclick="closeTeamModal()"></button>
+            </header>
+            <section class="modal-card-body">
+                <!-- Formulaire pour ajouter une nouvelle team -->
+                <form id="teamForm">
+                    <div class="field">
+                        <label class="label">Nom de la Team</label>
+                        <div class="control">
+                            <input class="input" type="text" id="teamName" placeholder="Entrez le nom de la team" required>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Description de la Team</label>
+                        <div class="control">
+                            <textarea class="textarea" id="teamDescription" placeholder="Entrez la description de la team" required></textarea>
+                        </div>
+                    </div>
+                    <div class="field is-grouped">
+                        <div class="control">
+                            <button type="submit" class="button is-link">Créer ma Team</button>
+                        </div>
+                        <div class="control">
+                            <button type="button" class="button is-light" onclick="closeTeamModal()">Annuler</button>
+                        </div>
+                    </div>
+                </form>
             </section>
         </div>
     </div>
 
-   <!-- Modals -->
-<div class="modal" id="pokemonModal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title" id="pokemonModalLabel">Pokemon Details</p>
-            <button class="delete" aria-label="close" onclick="closePokemonModal()"></button>
-        </header>
-        <section class="modal-card-body">
-            <!-- Contenu de la modal pour les détails des pokémons -->
-        </section>
+    <div class="modal" id="teamDetailModal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title" id="teamDetailModalLabel">Détails de la Team</p>
+                <button class="delete" aria-label="close" onclick="closeTeamDetailModal()"></button>
+            </header>
+            <section class="modal-card-body">
+                <p id="teamDetailDescription" class="team-description"></p>
+            </section>
+        </div>
     </div>
-</div>
-
-<div class="modal" id="teamModal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title" id="teamModalLabel">Ajouter une team</p>
-            <button class="delete" aria-label="close" onclick="closeTeamModal()"></button>
-        </header>
-        <section class="modal-card-body">
-            <!-- Formulaire pour ajouter une nouvelle team -->
-            <form id="teamForm">
-                <div class="field">
-                    <label class="label">Nom de la Team</label>
-                    <div class="control">
-                        <input class="input" type="text" id="teamName" placeholder="Entrez le nom de la team" required>
-                    </div>
-                </div>
-                <div class="field">
-                    <label class="label">Description de la Team</label>
-                    <div class="control">
-                        <textarea class="textarea" id="teamDescription" placeholder="Entrez la description de la team" required></textarea>
-                    </div>
-                </div>
-                <div class="field is-grouped">
-                    <div class="control">
-                        <button type="submit" class="button is-link">Créer ma Team</button>
-                    </div>
-                    <div class="control">
-                        <button type="button" class="button is-light" onclick="closeTeamModal()">Annuler</button>
-                    </div>
-                </div>
-            </form>
-        </section>
-    </div>
-</div>
-
-<div class="modal" id="teamDetailModal">
-    <div class="modal-background"></div>
-    <div class="modal-card">
-        <header class="modal-card-head">
-            <p class="modal-card-title" id="teamDetailModalLabel">Détails de la Team</p>
-            <button class="delete" aria-label="close" onclick="closeTeamDetailModal()"></button>
-        </header>
-        <section class="modal-card-body">
-            <p id="teamDetailDescription"></p>
-        </section>
-    </div>
-</div>
-
 
     <!-- Custom JS -->
     <script src="./assets/js/index.js"></script>
 </body>
 </html>
+
 
 
 

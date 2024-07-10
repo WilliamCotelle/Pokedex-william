@@ -4,26 +4,29 @@ const seedDatabase = async () => {
   try {
     await sequelize.sync({ force: true }); // Réinitialiser la base de données
 
-    // Insertion des types
-    const types = [
-      { name: 'Acier', color: 'aaaabb' },
-      { name: 'Combat', color: 'bb5544' },
-      { name: 'Dragon', color: '7766ee' },
-      { name: 'Eau', color: '3399ff' },
-      { name: 'Électrik', color: 'ffbb33' },
-      { name: 'Feu', color: 'ff4422' },
-      { name: 'Glace', color: '77ddff' },
-      { name: 'Insecte', color: 'aabb22' },
-      { name: 'Normal', color: 'bbaabb' },
-      { name: 'Plante', color: '77cc55' },
-      { name: 'Poison', color: 'aa5599' },
-      { name: 'Psy', color: 'ff5599' },
-      { name: 'Roche', color: 'bbaa66' },
-      { name: 'Sol', color: 'ddbb55' },
-      { name: 'Spectre', color: '6666bb' },
-      { name: 'Ténèbres', color: '665544' },
-      { name: 'Vol', color: '6699ff' },
-    ];
+// Insertion des types
+// Insertion des types
+const types = [
+  { name: 'Acier', color: 'linear-gradient(45deg, #787887, #b8b8d0)' },
+  { name: 'Combat', color: 'linear-gradient(45deg, #7d1f1a, #c03028)' },
+  { name: 'Dragon', color: 'linear-gradient(45deg, #4924a1, #7038f8)' },
+  { name: 'Eau', color: 'linear-gradient(45deg, #3b5796, #6890f0)' },
+  { name: 'Électrik', color: 'linear-gradient(45deg, #a1871f, #f8d030)' },
+  { name: 'Feu', color: 'linear-gradient(45deg, #b23300, #f08030)' },
+  { name: 'Glace', color: 'linear-gradient(45deg, #638d8d, #98d8d8)' },
+  { name: 'Insecte', color: 'linear-gradient(45deg, #6d7815, #a8b820)' },
+  { name: 'Normal', color: 'linear-gradient(45deg, #6d6d4e, #a8a878)' },
+  { name: 'Plante', color: 'linear-gradient(45deg, #4e8234, #78c850)' },
+  { name: 'Poison', color: 'linear-gradient(45deg, #5d1a5d, #a040a0)' },
+  { name: 'Psy', color: 'linear-gradient(45deg, #a13959, #f85888)' },
+  { name: 'Roche', color: 'linear-gradient(45deg, #786824, #b8a038)' },
+  { name: 'Sol', color: 'linear-gradient(45deg, #927d44, #e0c068)' },
+  { name: 'Spectre', color: 'linear-gradient(45deg, #4b3b67, #705898)' },
+  { name: 'Ténèbres', color: 'linear-gradient(45deg, #49392f, #705848)' },
+  { name: 'Vol', color: 'linear-gradient(45deg, #6d5eb7, #a890f0)' }
+];
+
+
 
     for (const type of types) {
       await Type.findOrCreate({

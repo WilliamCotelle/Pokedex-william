@@ -7,17 +7,18 @@
 
 /* Body styles */
 body {
-    background-color: #f9f9f9; /* Radix gray background */
+    background-color: #f1f3f5; /* Radix gray background */
     font-family: 'Helvetica Neue', Arial, sans-serif;
     color: #333; /* Radix gray text color */
 }
 
 /* Header styles */
 header {
-    background-color: #333;
+    background-color: #1a1a1a;
     color: white;
     padding: 1rem 0;
     text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Container styles */
@@ -29,13 +30,14 @@ header {
 /* Sidebar styles */
 aside {
     flex: 0 0 20%;
-    background-color: #e0e0e0; /* Radix gray */
+    background-color: #f8f9fa; /* Radix gray */
     padding: 1rem;
     border-radius: 8px;
     position: sticky;
     top: 1rem; /* Distance from the top */
-    height: 100vh; /* Full viewport height */
+    height: calc(100vh - 2rem); /* Full viewport height minus padding */
     overflow-y: auto; /* Scroll if content overflows */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 /* Main content styles */
@@ -48,7 +50,7 @@ main {
 .sidebar-heading {
     font-size: 1.25rem;
     margin-bottom: 1rem;
-    color: #333; /* Radix gray text color */
+    color: #495057; /* Radix gray text color */
 }
 
 #team-list {
@@ -56,7 +58,7 @@ main {
 }
 
 .team-card {
-    border: 1px solid #ccc; /* Radix gray */
+    border: 1px solid #ced4da; /* Radix gray */
     border-radius: 8px;
     padding: 1rem;
     margin-bottom: 1rem;
@@ -64,25 +66,36 @@ main {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    transition: box-shadow 0.3s;
 }
 
 .team-card h5 {
     font-size: 1rem;
     margin: 0;
+    color: #212529; /* Radix gray */
+}
+
+.team-card:hover {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
 /* Button styles */
 button {
     cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    padding: 0.5rem 1rem;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .button.is-warning {
-    background-color: #f5a623; /* Radix yellow */
+    background-color: #ffc107; /* Radix yellow */
     color: white;
 }
 
 .button.is-warning:hover {
-    background-color: #e69520; /* Darker yellow */
+    background-color: #e0a800; /* Darker yellow */
+    transform: translateY(-2px);
 }
 
 /* Pokemon list styles */
@@ -96,13 +109,13 @@ button {
 
 .pokemon-card {
     background-color: white;
-    border: 1px solid #ccc; /* Radix gray */
+    border: 1px solid #ced4da; /* Radix gray */
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     overflow: hidden;
     width: 200px;
     text-align: center;
-    transition: transform 0.2s;
+    transition: transform 0.2s, box-shadow 0.3s;
     cursor: pointer;
     position: relative;
 }
@@ -124,6 +137,7 @@ button {
 
 .pokemon-card:hover {
     transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
 .pokemon-card img {
@@ -132,7 +146,7 @@ button {
 }
 
 .pokemon-card h3 {
-    background-color: #333;
+    background-color: #1a1a1a;
     color: white;
     margin: 0;
     padding: 0.5rem 0;
@@ -145,14 +159,150 @@ button {
 }
 
 /* Modal styles */
+.modal-card {
+    max-width: 600px;
+    margin: auto;
+}
+
+.modal-card-head {
+    background-color: #1a1a1a;
+    color: white;
+    border-bottom: 1px solid #ced4da;
+}
+
+.modal-card-head .modal-card-title {
+    font-size: 1.5rem;
+}
+
+.modal-card-body {
+    padding: 2rem;
+    background-color: #f8f9fa; /* Radix gray */
+}
+
+.modal-card-body p {
+    margin: 0.5rem 0;
+    font-size: 1rem;
+    text-align: center;
+}
+
+.modal-card-foot {
+    background-color: #f8f9fa; /* Radix gray */
+    border-top: 1px solid #ced4da;
+}
+
 .modal-pokemon-img {
     display: block;
     margin: 0 auto;
     max-width: 100%;
 }
 
-.modal-body p {
-    margin: 0.5rem 0;
+.team-description {
+    border: 1px solid #ced4da; /* Radix gray */
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: white;
+    margin-top: 1rem;
+}
+/* Modal card styles */
+.modal-card {
+    max-width: 800px;
+    width: 90%;
+    background-color: #f0f4f8; /* Light gray background */
+    color: #333; /* Dark text color */
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.pokemon-detail-header {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background-color: #4CAF50; /* Green background for header */
+    color: white;
+}
+
+.pokemon-image {
+    width: 150px;
+    height: auto;
+    margin-right: 1rem;
+}
+
+.pokemon-basic-info h2 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+.pokemon-basic-info p {
+    margin: 0.25rem 0;
+    font-size: 1.25rem;
+}
+
+.pokemon-stats {
+    padding: 1rem;
+}
+
+.pokemon-stats h3 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.stat span {
+    width: 100px;
     font-size: 1rem;
-    text-align: center;
+}
+
+.stat-bar {
+    flex: 1;
+    background-color: #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 0 1rem;
+}
+
+.stat-value {
+    height: 20px;
+    background-color: #4CAF50; /* Green bar color */
+}
+
+.pokemon-image {
+    max-width: 150px; /* Adjust this to your preference */
+    margin-right: 1rem;
+}
+
+.pokemon-basic-info {
+    flex-grow: 1;
+}
+
+.pokemon-stats {
+    padding: 1rem;
+    background-color: white;
+}
+
+.stat {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.stat span {
+    width: 100px;
+}
+
+.stat-bar {
+    flex: 1;
+    background-color: #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 0 1rem;
+}
+
+.stat-value {
+    height: 20px;
+    background-color: #4CAF50; /* Adjust this color */
 }

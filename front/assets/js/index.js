@@ -6,24 +6,53 @@ const getPokemons = async () => {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        return data;
+        const pokemons = data.map (pokemon => {
+            if (pokemon.Types) {
+                pokemon.color = pokemon.Types[0].color.toLowerCase();
+            }
+            return pokemon;
+        })
+        return pokemons;
     } catch (error) {
         console.log('Error fetching pokemons:', error);
     }
 }
 
+let typeMap = {};
+// Fonction pour sélectionner les types depuis l'API
+const getTypes = async () => {
+    try {
+        const response = await fetch('http://localhost:3000/api/types');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const types = await response.json();
+        for (const type of types) {
+            typeMap[type.name.toLowerCase()] = type.color;
+        }
+    } catch (error) {
+        console.log('Error fetching types:', error);
+    }
+};
+
 // Fonction pour créer un élément de carte de pokémon
 function createPokemonCardElem(pokemonData) {
     const pokemonCard = document.createElement('div');
     pokemonCard.classList.add('pokemon-card', 'column', 'is-one-quarter');
-
+    
+    if (pokemonData.color) {
+        pokemonCard.style.background = pokemonData.color;
+    }
+    // console.log(typeColor)
+    // console.log(pokemonData)
+    // console.log(typeMap);
+    
     const pokemonImage = document.createElement('img');
     pokemonImage.src = `./assets/img/${pokemonData.id}.webp`;
 
     const pokemonName = document.createElement('h3');
     pokemonName.classList.add('title', 'is-4');
     pokemonName.textContent = pokemonData.name;
-
 
     const pokemonNumberPokedex = document.createElement('span');
     pokemonNumberPokedex.classList.add('pokemon-number');
@@ -36,28 +65,42 @@ function createPokemonCardElem(pokemonData) {
     return pokemonCard;
 }
 
+
 // Récupérer les pokémons et les afficher
 const fetchAndDisplayPokemons = async () => {
     try {
         const pokemons = await getPokemons();
+        
         const pokemonList = document.getElementById('pokemon-list');
         pokemonList.innerHTML = '';
         for (const pokemon of pokemons) {
+            if (pokemon.type) {
+                pokemon.color = typeMap[pokemon.type];
+            }
             pokemonList.appendChild(createPokemonCardElem(pokemon));
         }
     } catch (error) {
         console.log('Error displaying pokemons:', error);
     }
-}
+};
 
-// Récupérer les détails du Pokémon
+// Récupérer les détails du Pokémon et inclure les couleurs de type
 const fetchPokemonDetails = async (pokemonId) => {
     const response = await fetch(`http://localhost:3000/api/pokemons/${pokemonId}`);
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
-    return await response.json();
+    const pokemon = await response.json();
+
+    // Add type color to pokemon
+    if (pokemon.Types) {
+        pokemon.color = pokemon.Types[0].color.toLowerCase();
+    }
+
+    return pokemon;
 };
+
+
 
 // Met à jour le contenu de la modal
 const updateModalContent = (pokemon) => {
@@ -69,32 +112,68 @@ const updateModalContent = (pokemon) => {
     // vider le contenu
     modalBody.innerHTML = '';
 
-    // ajouter le contenu
+    // Ajouter le contenu structuré
+    const pokemonDetailHeader = document.createElement('div');
+    pokemonDetailHeader.classList.add('pokemon-detail-header');
+
     const pokemonImg = document.createElement('img');
     pokemonImg.src = `./assets/img/${pokemon.id}.webp`;
     pokemonImg.alt = pokemon.name;
     pokemonImg.classList.add('modal-pokemon-img');
-    
-    const hp = document.createElement('p');
-    hp.textContent = `HP: ${pokemon.hp}`;
 
-    const atk = document.createElement('p');
-    atk.textContent = `ATK: ${pokemon.atk}`;
+    const pokemonBasicInfo = document.createElement('div');
+    pokemonBasicInfo.classList.add('pokemon-basic-info');
 
-    const def = document.createElement('p');
-    def.textContent = `DEF: ${pokemon.def}`;
+    const pokemonName = document.createElement('h2');
+    pokemonName.textContent = pokemon.name;
 
-    const atkSpe = document.createElement('p');
-    atkSpe.textContent = `SP. ATK: ${pokemon.atk_spe}`;
+    if (pokemon.color) {
+        document.querySelector('#pokemonModal .modal-card').style.background = pokemon.color;
+    }
 
-    const defSpe = document.createElement('p');
-    defSpe.textContent = `SP. DEF: ${pokemon.def_spe}`;
+    pokemonBasicInfo.append(pokemonName);
+    pokemonDetailHeader.append(pokemonImg, pokemonBasicInfo);
 
-    const speed = document.createElement('p');
-    speed.textContent = `Speed: ${pokemon.speed}`;
+    const pokemonStats = document.createElement('div');
+    pokemonStats.classList.add('pokemon-stats');
 
-    modalBody.append(pokemonImg, hp, atk, def, atkSpe, defSpe, speed);
+    const statsTitle = document.createElement('h3');
+    statsTitle.textContent = 'Stats';
+
+    const createStatElement = (label, value) => {
+        const stat = document.createElement('div');
+        stat.classList.add('stat');
+
+        const statLabel = document.createElement('span');
+        statLabel.textContent = label;
+
+        const statBar = document.createElement('div');
+        statBar.classList.add('stat-bar');
+
+        const statValue = document.createElement('div');
+        statValue.classList.add('stat-value');
+        statValue.style.width = `${value}%`;
+
+        const statText = document.createElement('span');
+        statText.textContent = value;
+
+        statBar.appendChild(statValue);
+        stat.append(statLabel, statBar, statText);
+        return stat;
+    };
+
+    const hpStat = createStatElement('HP', pokemon.hp);
+    const atkStat = createStatElement('Attack', pokemon.atk);
+    const defStat = createStatElement('Defense', pokemon.def);
+    const atkSpeStat = createStatElement('SP. ATK', pokemon.atk_spe);
+    const defSpeStat = createStatElement('SP. DEF', pokemon.def_spe);
+    const speedStat = createStatElement('Speed', pokemon.speed);
+
+    pokemonStats.append(statsTitle, hpStat, atkStat, defStat, atkSpeStat, defSpeStat, speedStat);
+
+    modalBody.append(pokemonDetailHeader, pokemonStats);
 };
+
 
 // Affiche la modal
 const showModal = (modalId) => {
@@ -250,6 +329,7 @@ const fetchAndDisplayTeams = async () => {
 
 // Attendre que le document soit prêt
 document.addEventListener("DOMContentLoaded", () => {
+    getTypes();
     fetchAndDisplayPokemons();
     fetchAndDisplayTeams();
 
@@ -275,7 +355,3 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 });
-
-
-
-
