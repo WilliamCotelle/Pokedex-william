@@ -17,10 +17,25 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="./assets/css/style.css">
 </head>
+
 <body>
-    <header class="has-background-primary has-text-white has-text-centered py-3">
-        <h1 class="title">Pokedex</h1>
-    </header>
+    <nav class="navbar is-light">
+        <div class="navbar-brand">
+            <a class="navbar-item" href="#">
+                <img src="/assets/img/logo3.png" alt="Pokedex Logo">
+            </a>
+        </div>
+    
+        <div class="navbar-menu">
+            <div class="navbar-start">
+                <a class="navbar-item" href="#">Accueil</a>
+                <a class="navbar-item" href="#" id="view-teams">Voir les équipes</a>
+                <a class="navbar-item" href="#" id="compare-pokemons">Comparer</a>
+                <a class="navbar-item" href="#" id="login">Login</a>
+                <a class="navbar-item" href="#" id="contact">Contact</a>
+            </div>
+        </div>
+    </nav>
     <div class="container is-fluid">
         <div class="columns">
             <aside class="column is-one-quarter">
@@ -74,6 +89,39 @@
                     <!-- Repeat for other stats: Defense, Special Attack, Special Defense, Speed -->
                 </div>
             </section>
+        </div>
+    </div>
+    <!-- Modal comparer -->
+    <div class="modal" id="compareModal">
+        <div class="modal-background"></div>
+        <div class="modal-card">
+            <header class="modal-card-head">
+                <p class="modal-card-title">Comparer les Pokémon</p>
+                <button class="delete" aria-label="close" onclick="closeModal('compareModal')"></button>
+            </header>
+            <section class="modal-card-body">
+                <div class="columns">
+                    <div class="column">
+                        <label for="pokemon1">Sélectionner le premier Pokémon</label>
+                        <select id="pokemon1" class="select">
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
+                    </div>
+                    <div class="column">
+                        <label for="pokemon2">Sélectionner le second Pokémon</label>
+                        <select id="pokemon2" class="select">
+                            <!-- Options will be populated by JavaScript -->
+                        </select>
+                    </div>
+                </div>
+                <button class="button is-primary mt-3" onclick="comparePokemons()">Comparer</button>
+                <div id="comparisonResult" class="columns mt-4">
+                    <!-- Comparison result will be displayed here -->
+                </div>
+            </section>
+            <footer class="modal-card-foot">
+                <button class="button" onclick="closeModal('compareModal')">Fermer</button>
+            </footer>
         </div>
     </div>
     

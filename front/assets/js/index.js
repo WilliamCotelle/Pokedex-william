@@ -6,7 +6,7 @@ const getPokemons = async () => {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        const pokemons = data.map (pokemon => {
+        const pokemons = data.map(pokemon => {
             if (pokemon.Types) {
                 pokemon.color = pokemon.Types[0].color.toLowerCase();
             }
@@ -43,10 +43,7 @@ function createPokemonCardElem(pokemonData) {
     if (pokemonData.color) {
         pokemonCard.style.background = pokemonData.color;
     }
-    // console.log(typeColor)
-    // console.log(pokemonData)
-    // console.log(typeMap);
-    
+
     const pokemonImage = document.createElement('img');
     pokemonImage.src = `./assets/img/${pokemonData.id}.webp`;
 
@@ -65,7 +62,6 @@ function createPokemonCardElem(pokemonData) {
     return pokemonCard;
 }
 
-
 // Récupérer les pokémons et les afficher
 const fetchAndDisplayPokemons = async () => {
     try {
@@ -79,6 +75,8 @@ const fetchAndDisplayPokemons = async () => {
             }
             pokemonList.appendChild(createPokemonCardElem(pokemon));
         }
+
+        populatePokemonSelects(pokemons);
     } catch (error) {
         console.log('Error displaying pokemons:', error);
     }
@@ -99,8 +97,6 @@ const fetchPokemonDetails = async (pokemonId) => {
 
     return pokemon;
 };
-
-
 
 // Met à jour le contenu de la modal
 const updateModalContent = (pokemon) => {
@@ -174,7 +170,6 @@ const updateModalContent = (pokemon) => {
     modalBody.append(pokemonDetailHeader, pokemonStats);
 };
 
-
 // Affiche la modal
 const showModal = (modalId) => {
     const modal = document.getElementById(modalId);
@@ -205,7 +200,7 @@ const openAddTeamModal = () => {
 
 // Fonction pour fermer la modal des équipes
 const closeTeamModal = () => {
-    closeModal('teamModal', 'teamDetailModal');
+    closeModal('teamModal');
 };
 
 // Fonction pour afficher les détails de l'équipe dans une modal
@@ -264,7 +259,6 @@ const addTeam = async (teamName, teamDescription) => {
     }
 };
 
-
 // Fonction pour gérer la soumission du formulaire de création d'équipe
 const handleTeamFormSubmit = async (event) => {
     event.preventDefault();
@@ -274,6 +268,7 @@ const handleTeamFormSubmit = async (event) => {
     closeTeamModal();
     document.getElementById('teamForm').reset();
 };
+
 //écouteur d'événement pour le formulaire de création d'équipe
 document.getElementById('teamForm').addEventListener('submit', handleTeamFormSubmit);
 
@@ -314,7 +309,6 @@ const displayTeams = (teams) => {
     }
 };
 
-
 // Fonction pour récupérer et afficher les équipes
 const fetchAndDisplayTeams = async () => {
     try {
@@ -325,13 +319,99 @@ const fetchAndDisplayTeams = async () => {
     }
 }
 
+// =============comparer poké=============
+// Fonction pour afficher les pokemons dans la liste
+const populatePokemonSelects = (pokemons) => {
+    const pokemon1Select = document.getElementById('pokemon1');
+    const pokemon2Select = document.getElementById('pokemon2');
 
+    for (const pokemon of pokemons) {
+        const option1 = document.createElement('option');
+        option1.value = pokemon.id;
+        option1.textContent = pokemon.name;
+        pokemon1Select.appendChild(option1);
+
+        const option2 = document.createElement('option');
+        option2.value = pokemon.id;
+        option2.textContent = pokemon.name;
+        pokemon2Select.appendChild(option2);
+    }
+};
+
+// Fonction pour afficher les résultats de la comparaison 
+const displayComparison = (pokemon1, pokemon2) => {
+    const comparisonResult = document.getElementById('comparisonResult');
+    comparisonResult.innerHTML = ''; 
+
+    const pokemon1Column = document.createElement('div');
+    pokemon1Column.classList.add('column');
+    const pokemon2Column = document.createElement('div');
+    pokemon2Column.classList.add('column');
+
+    const createStatElement = (label, value) => {
+        const stat = document.createElement('div');
+        stat.classList.add('stat');
+
+        const statLabel = document.createElement('span');
+        statLabel.textContent = label;
+
+        const statBar = document.createElement('div');
+        statBar.classList.add('stat-bar');
+
+        const statValue = document.createElement('div');
+        statValue.classList.add('stat-value');
+        statValue.style.width = `${value}%`;
+
+        const statText = document.createElement('span');
+        statText.textContent = value;
+
+        statBar.appendChild(statValue);
+        stat.append(statLabel, statBar, statText);
+        return stat;
+    };
+
+    const createPokemonStats = (pokemon) => {
+        const statsContainer = document.createElement('div');
+        statsContainer.classList.add('pokemon-stats');
+
+        const hpStat = createStatElement('HP', pokemon.hp);
+        const atkStat = createStatElement('Attack', pokemon.atk);
+        const defStat = createStatElement('Defense', pokemon.def);
+        const atkSpeStat = createStatElement('SP. ATK', pokemon.atk_spe);
+        const defSpeStat = createStatElement('SP. DEF', pokemon.def_spe);
+        const speedStat = createStatElement('Speed', pokemon.speed);
+
+        statsContainer.append(hpStat, atkStat, defStat, atkSpeStat, defSpeStat, speedStat);
+        return statsContainer;
+    };
+
+    pokemon1Column.appendChild(createPokemonStats(pokemon1));
+    pokemon2Column.appendChild(createPokemonStats(pokemon2));
+
+    comparisonResult.appendChild(pokemon1Column);
+    comparisonResult.appendChild(pokemon2Column);
+};
+
+const comparePokemons = async () => {
+    const pokemon1Id = document.getElementById('pokemon1').value;
+    const pokemon2Id = document.getElementById('pokemon2').value;
+
+    if (!pokemon1Id || !pokemon2Id) {
+        alert('Veuillez sélectionner deux Pokémon à comparer.');
+        return;
+    }
+
+    const pokemon1 = await fetchPokemonDetails(pokemon1Id);
+    const pokemon2 = await fetchPokemonDetails(pokemon2Id);
+
+    displayComparison(pokemon1, pokemon2);
+};
 
 // Attendre que le document soit prêt
-document.addEventListener("DOMContentLoaded", () => {
-    getTypes();
-    fetchAndDisplayPokemons();
-    fetchAndDisplayTeams();
+document.addEventListener("DOMContentLoaded", async () => {
+    await getTypes();
+    await fetchAndDisplayPokemons();
+    await fetchAndDisplayTeams();
 
     // Écouteur d'événements pour les cartes de pokémon
     document.addEventListener('click', (event) => {
@@ -354,4 +434,12 @@ document.addEventListener("DOMContentLoaded", () => {
             closeModal(background.closest('.modal').id);
         });
     });
+
+    // Ouvrir la modal de comparaison
+    document.getElementById('compare-pokemons').addEventListener('click', () => {
+        showModal('compareModal');
+    });
+
+    // Comparer les Pokémon
+    document.getElementById('compareBtn').addEventListener('click', comparePokemons);
 });

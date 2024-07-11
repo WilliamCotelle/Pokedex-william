@@ -143,6 +143,7 @@ button {
 .pokemon-card img {
     width: 100%;
     height: auto;
+    filter: drop-shadow(14px -2px 4px);
 }
 
 .pokemon-card h3 {
@@ -194,6 +195,7 @@ button {
     display: block;
     margin: 0 auto;
     max-width: 100%;
+    filter: drop-shadow(14px -2px 4px black);
 }
 
 .team-description {
@@ -217,7 +219,10 @@ button {
     display: flex;
     align-items: center;
     padding: 1rem;
-    background-color: #4CAF50; /* Green background for header */
+    border-radius: 1rem;
+    background-color: #241f1fcc;
+    /* background-image: url(/assets/img/bgmodal.webp); */
+    /* background-size: cover; */
     color: white;
 }
 
@@ -228,7 +233,7 @@ button {
 }
 
 .pokemon-basic-info h2 {
-    margin: 0;
+    margin: 0 81px;
     font-size: 2rem;
 }
 
@@ -267,11 +272,11 @@ button {
 
 .stat-value {
     height: 20px;
-    background-color: #4CAF50; /* Green bar color */
+    background-color: #4d4a4a !important;
 }
 
 .pokemon-image {
-    max-width: 150px; /* Adjust this to your preference */
+    max-width: 150px;
     margin-right: 1rem;
 }
 
