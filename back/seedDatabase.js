@@ -4,7 +4,7 @@ const seedDatabase = async () => {
   try {
     await sequelize.sync({ force: true }); // Réinitialiser la base de données
 
-// Insertion des types
+
 // Insertion des types
 const types = [
   { name: 'Acier', color: 'linear-gradient(45deg, #787887, #b8b8d0)' },

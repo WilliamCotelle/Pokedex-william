@@ -194,9 +194,11 @@ const openPokemonDetailModal = async (pokemonId) => {
 };
 
 // Fonction pour ouvrir la modal pour ajouter une nouvelle équipe
-const openAddTeamModal = () => {
+const openAddTeamModal = async () => {
+    await populateTeamPokemonSelects();
     showModal('teamModal');
 };
+
 
 // Fonction pour fermer la modal des équipes
 const closeTeamModal = () => {
@@ -204,19 +206,33 @@ const closeTeamModal = () => {
 };
 
 // Fonction pour afficher les détails de l'équipe dans une modal
-const openTeamDetailModal = (teamId) => {
-    fetchTeamDetails(teamId).then(team => {
+// Fonction pour afficher les détails de l'équipe dans une modal
+const openTeamDetailModal = async (teamId) => {
+    try {
+        const team = await fetchTeamDetails(teamId);
         const modalTitle = document.getElementById('teamDetailModalLabel');
         const modalDescription = document.getElementById('teamDetailDescription');
+        const pokemonList = document.getElementById('teamDetailPokemonList');
 
         modalTitle.textContent = team.name;
         modalDescription.textContent = team.description;
+        pokemonList.innerHTML = ''; // Clear previous list
+
+        for (const pokemon of team.Pokemons) {
+            const pokemonImg = document.createElement('img');
+            pokemonImg.src = `./assets/img/${pokemon.id}.webp`;
+            pokemonImg.alt = pokemon.name;
+            pokemonImg.classList.add('pokemon-team-img');
+            pokemonList.appendChild(pokemonImg);
+        }
 
         showModal('teamDetailModal');
-    }).catch(error => {
+    } catch (error) {
         console.log('Error fetching team details:', error);
-    });
+    }
 };
+
+
 
 // Fonction pour sélectionner les détails d'une équipe
 const fetchTeamDetails = async (teamId) => {
@@ -228,12 +244,12 @@ const fetchTeamDetails = async (teamId) => {
 };
 
 // Fonction pour ajouter une nouvelle équipe
-const addTeam = async (teamName, teamDescription) => {
+const addTeam = async (teamName, teamDescription, pokemons) => {
     try {
         const response = await fetch('http://localhost:3000/api/teams', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: teamName, description: teamDescription })
+            body: JSON.stringify({ name: teamName, description: teamDescription, pokemons })
         });
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -259,15 +275,21 @@ const addTeam = async (teamName, teamDescription) => {
     }
 };
 
-// Fonction pour gérer la soumission du formulaire de création d'équipe
+// Fonction pour gérer la soumission du formulaire de création d'équipe// Fonction pour gérer la soumission du formulaire de création d'équipe
 const handleTeamFormSubmit = async (event) => {
     event.preventDefault();
     const teamName = document.getElementById('teamName').value;
     const teamDescription = document.getElementById('teamDescription').value;
-    await addTeam(teamName, teamDescription);
+
+    const pokemonSelects = document.getElementById('pokemonSelects').querySelectorAll('select');
+    const selectedPokemons = Array.from(pokemonSelects).map(select => select.value).filter(pokemonId => pokemonId !== '');
+
+    await addTeam(teamName, teamDescription, selectedPokemons);
     closeTeamModal();
     document.getElementById('teamForm').reset();
 };
+
+
 
 //écouteur d'événement pour le formulaire de création d'équipe
 document.getElementById('teamForm').addEventListener('submit', handleTeamFormSubmit);
@@ -454,12 +476,40 @@ const closeComparisonResultModal = () => {
     closeModal('comparisonResultModal');
 };
 
+const populateTeamPokemonSelects = async () => {
+    const pokemonSelectsContainer = document.getElementById('pokemonSelects');
+    pokemonSelectsContainer.innerHTML = '';
+
+    const pokemons = await getPokemons();
+
+    for (let i = 0; i < 5; i++) {
+        const select = document.createElement('select');
+        select.classList.add('input', 'mb-2');
+
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Sélectionnez un Pokémon';
+        select.appendChild(defaultOption);
+
+        pokemons.forEach(pokemon => {
+            const option = document.createElement('option');
+            option.value = pokemon.id;
+            option.textContent = pokemon.name;
+            select.appendChild(option);
+        });
+
+        pokemonSelectsContainer.appendChild(select);
+    }
+};
+
+
 // Attendre que le document soit prêt
 document.addEventListener("DOMContentLoaded", async () => {
     await getTypes();
     const pokemons = await getPokemons();
     await fetchAndDisplayPokemons();
     await fetchAndDisplayTeams();
+
     populatePokemonSelects(pokemons);
 
     // Écouteur d'événements pour les cartes de pokémon
@@ -499,4 +549,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     document.querySelectorAll('.modal-background').forEach(background => {
         background.addEventListener('click', closeComparisonResultModal);
     });
+
+    // Ouvrir la modal d'ajout d'équipe
+    document.getElementById('addTeamBtn').addEventListener('click', openAddTeamModal);
 });

@@ -147,14 +147,15 @@ button {
 }
 
 .pokemon-card h3 {
-    /* background-color: #1a1a1a; */
     color: white;
     margin: 0;
     padding: 0.5rem 0;
 }
+
 h2.title.is-4 {
     background: transparent;
 }
+
 .title.is-4 {
     font-size: 1.5rem;
     background: #12101078;
@@ -169,8 +170,12 @@ h2.title.is-4 {
 
 /* Modal styles */
 .modal-card {
-    max-width: 600px;
+    max-width: 800px;
     margin: auto;
+    background-color: #f0f4f8; /* Light gray background */
+    color: #333; /* Dark text color */
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .modal-card-head {
@@ -213,6 +218,7 @@ h2.title.is-4 {
     background-color: white;
     margin-top: 1rem;
 }
+
 /* Modal card styles */
 .modal-card {
     max-width: 800px;
@@ -229,8 +235,6 @@ h2.title.is-4 {
     padding: 1rem;
     border-radius: 1rem;
     background-color: #241f1fcc;
-    /* background-image: url(/assets/img/bgmodal.webp); */
-    /* background-size: cover; */
     color: white;
 }
 
@@ -319,6 +323,7 @@ h2.title.is-4 {
     height: 20px;
     background-color: #4CAF50; /* Adjust this color */
 }
+
 .pokemon-selection {
     max-height: 400px;
     overflow-y: scroll;
@@ -379,4 +384,41 @@ h2.title.is-4 {
 
 #suggestions .dropdown-item:hover {
     background-color: #f5f5f5;
+}
+
+img.pokemon-team-img {
+    width: 8rem;
+    height: auto;
+    margin: 0 0.2rem;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    aside {
+        flex: 0 0 auto;
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    main {
+        flex: 1;
+        width: 100%;
+    }
+
+    .pokemon-card {
+        width: 100%;
+    }
+
+    .modal-card {
+        width: 95%;
+    }
+
+    .modal-pokemon-img {
+        margin: 0 auto 20px;
+    }
 }

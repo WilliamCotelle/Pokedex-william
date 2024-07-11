@@ -32,11 +32,12 @@ Accept: application/json
 GET http://localhost:3000/api/teams/1
 Accept: application/json
 
-### Ajouter une nouvelle équipe
+### Création d'une nouvelle équipe
 POST http://localhost:3000/api/teams
 Content-Type: application/json
 
 {
-  "name": "Team de William",
-  "description": "La meilleur team"
+  "name": "Team Test",
+  "description": "This is a test team.",
+  "pokemons": [1, 2, 3, 4, 5]
 }
