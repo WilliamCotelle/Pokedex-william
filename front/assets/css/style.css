@@ -147,10 +147,18 @@ button {
 }
 
 .pokemon-card h3 {
-    background-color: #1a1a1a;
+    /* background-color: #1a1a1a; */
     color: white;
     margin: 0;
     padding: 0.5rem 0;
+}
+h2.title.is-4 {
+    background: transparent;
+}
+.title.is-4 {
+    font-size: 1.5rem;
+    background: #12101078;
+    border-radius: 1rem;
 }
 
 .pokemon-card .pokemon-stats {
@@ -347,7 +355,28 @@ button {
 
 .modal-pokemon-img {
     display: block;
-    margin: 0 auto 20px;
+    margin: 0 auto 20px 11rem;
     width: 150px;
     height: auto;
+}
+
+/* barre de recherche */
+#suggestions {
+    border: 1px solid #ddd;
+    max-height: 200px;
+    overflow-y: auto;
+    background-color: white;
+    position: absolute;
+    width: 100%;
+    z-index: 1000;
+    display: none;
+}
+
+#suggestions .dropdown-item {
+    padding: 8px 16px;
+    cursor: pointer;
+}
+
+#suggestions .dropdown-item:hover {
+    background-color: #f5f5f5;
 }
