@@ -320,33 +320,85 @@ const fetchAndDisplayTeams = async () => {
 }
 
 // =============comparer poké=============
-// Fonction pour afficher les pokemons dans la liste
+let selectedPokemon1 = null;
+let selectedPokemon2 = null;
+
+// Fonction pour afficher les Pokémon pour la sélection dans la comparaison
 const populatePokemonSelects = (pokemons) => {
-    const pokemon1Select = document.getElementById('pokemon1');
-    const pokemon2Select = document.getElementById('pokemon2');
+    const pokemon1Selection = document.getElementById('pokemon1-selection');
+    const pokemon2Selection = document.getElementById('pokemon2-selection');
+
+    pokemon1Selection.innerHTML = '';
+    pokemon2Selection.innerHTML = '';
 
     for (const pokemon of pokemons) {
-        const option1 = document.createElement('option');
-        option1.value = pokemon.id;
-        option1.textContent = pokemon.name;
-        pokemon1Select.appendChild(option1);
+        const img1 = document.createElement('img');
+        img1.src = `./assets/img/${pokemon.id}.webp`;
+        img1.alt = pokemon.name;
+        img1.classList.add('selectable-pokemon');
+        img1.dataset.id = pokemon.id;
+        img1.title = pokemon.name; // Pour afficher le nom au survol
+        img1.onclick = () => selectPokemon(1, pokemon.id);
 
-        const option2 = document.createElement('option');
-        option2.value = pokemon.id;
-        option2.textContent = pokemon.name;
-        pokemon2Select.appendChild(option2);
+        const img2 = document.createElement('img');
+        img2.src = `./assets/img/${pokemon.id}.webp`;
+        img2.alt = pokemon.name;
+        img2.classList.add('selectable-pokemon');
+        img2.dataset.id = pokemon.id;
+        img2.title = pokemon.name; // Pour afficher le nom au survol
+        img2.onclick = () => selectPokemon(2, pokemon.id);
+
+        pokemon1Selection.appendChild(img1);
+        pokemon2Selection.appendChild(img2);
     }
 };
 
-// Fonction pour afficher les résultats de la comparaison 
+const selectPokemon = (slot, pokemonId) => {
+    if (slot === 1) {
+        selectedPokemon1 = pokemonId;
+    } else if (slot === 2) {
+        selectedPokemon2 = pokemonId;
+    }
+    if (selectedPokemon1 && selectedPokemon2) {
+        comparePokemons();
+    }
+};
+
+const comparePokemons = async () => {
+    if (!selectedPokemon1 || !selectedPokemon2) {
+        alert('Veuillez sélectionner deux Pokémon à comparer.');
+        return;
+    }
+
+    const pokemon1 = await fetchPokemonDetails(selectedPokemon1);
+    const pokemon2 = await fetchPokemonDetails(selectedPokemon2);
+
+    displayComparison(pokemon1, pokemon2);
+};
+
+// Fonction pour afficher les résultats de la comparaison
 const displayComparison = (pokemon1, pokemon2) => {
     const comparisonResult = document.getElementById('comparisonResult');
-    comparisonResult.innerHTML = ''; 
+    comparisonResult.innerHTML = '';
 
     const pokemon1Column = document.createElement('div');
     pokemon1Column.classList.add('column');
     const pokemon2Column = document.createElement('div');
     pokemon2Column.classList.add('column');
+
+    // Afficher les images des Pokémon au-dessus des statistiques
+    const img1 = document.createElement('img');
+    img1.src = `./assets/img/${pokemon1.id}.webp`;
+    img1.alt = pokemon1.name;
+    img1.classList.add('modal-pokemon-img');
+
+    const img2 = document.createElement('img');
+    img2.src = `./assets/img/${pokemon2.id}.webp`;
+    img2.alt = pokemon2.name;
+    img2.classList.add('modal-pokemon-img');
+
+    pokemon1Column.appendChild(img1);
+    pokemon2Column.appendChild(img2);
 
     const createStatElement = (label, value) => {
         const stat = document.createElement('div');
@@ -390,28 +442,25 @@ const displayComparison = (pokemon1, pokemon2) => {
 
     comparisonResult.appendChild(pokemon1Column);
     comparisonResult.appendChild(pokemon2Column);
+
+    // Affiche la modal de comparaison des résultats
+    showModal('comparisonResultModal');
 };
 
-const comparePokemons = async () => {
-    const pokemon1Id = document.getElementById('pokemon1').value;
-    const pokemon2Id = document.getElementById('pokemon2').value;
-
-    if (!pokemon1Id || !pokemon2Id) {
-        alert('Veuillez sélectionner deux Pokémon à comparer.');
-        return;
-    }
-
-    const pokemon1 = await fetchPokemonDetails(pokemon1Id);
-    const pokemon2 = await fetchPokemonDetails(pokemon2Id);
-
-    displayComparison(pokemon1, pokemon2);
+// Fonction pour fermer la modal et réinitialiser les choix de Pokémon
+const closeComparisonResultModal = () => {
+    selectedPokemon1 = null;
+    selectedPokemon2 = null;
+    closeModal('comparisonResultModal');
 };
 
 // Attendre que le document soit prêt
 document.addEventListener("DOMContentLoaded", async () => {
     await getTypes();
+    const pokemons = await getPokemons();
     await fetchAndDisplayPokemons();
     await fetchAndDisplayTeams();
+    populatePokemonSelects(pokemons);
 
     // Écouteur d'événements pour les cartes de pokémon
     document.addEventListener('click', (event) => {
@@ -442,4 +491,12 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Comparer les Pokémon
     document.getElementById('compareBtn').addEventListener('click', comparePokemons);
+
+    // Fermer la modal de comparaison des résultats
+    document.querySelectorAll('.modal .delete').forEach(button => {
+        button.addEventListener('click', closeComparisonResultModal);
+    });
+    document.querySelectorAll('.modal-background').forEach(background => {
+        background.addEventListener('click', closeComparisonResultModal);
+    });
 });

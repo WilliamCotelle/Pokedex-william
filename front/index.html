@@ -91,39 +91,45 @@
             </section>
         </div>
     </div>
-    <!-- Modal comparer -->
-    <div class="modal" id="compareModal">
-        <div class="modal-background"></div>
-        <div class="modal-card">
-            <header class="modal-card-head">
-                <p class="modal-card-title">Comparer les Pokémon</p>
-                <button class="delete" aria-label="close" onclick="closeModal('compareModal')"></button>
-            </header>
-            <section class="modal-card-body">
-                <div class="columns">
-                    <div class="column">
-                        <label for="pokemon1">Sélectionner le premier Pokémon</label>
-                        <select id="pokemon1" class="select">
-                            <!-- Options will be populated by JavaScript -->
-                        </select>
-                    </div>
-                    <div class="column">
-                        <label for="pokemon2">Sélectionner le second Pokémon</label>
-                        <select id="pokemon2" class="select">
-                            <!-- Options will be populated by JavaScript -->
-                        </select>
-                    </div>
+   <!-- Modal pour comparer les Pokémon -->
+   <div class="modal" id="compareModal">
+    <div class="modal-background"></div>
+    <div class="modal-card modal-compare-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Comparer les Pokémon</p>
+            <button class="delete" aria-label="close" onclick="closeModal('compareModal')"></button>
+        </header>
+        <section class="modal-card-body">
+            <div class="columns">
+                <div class="column">
+                    <div id="pokemon1-selection" class="pokemon-selection"></div>
                 </div>
-                <button class="button is-primary mt-3" onclick="comparePokemons()">Comparer</button>
-                <div id="comparisonResult" class="columns mt-4">
-                    <!-- Comparison result will be displayed here -->
+                <div class="column">
+                    <div id="pokemon2-selection" class="pokemon-selection"></div>
                 </div>
-            </section>
-            <footer class="modal-card-foot">
-                <button class="button" onclick="closeModal('compareModal')">Fermer</button>
-            </footer>
-        </div>
+            </div>
+            <div class="has-text-centered">
+                <button id="compareBtn" class="button is-primary">Comparer</button>
+            </div>
+        </section>
     </div>
+</div>
+
+<div class="modal" id="comparisonResultModal">
+    <div class="modal-background"></div>
+    <div class="modal-card modal-comparison-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Résultat de la Comparaison</p>
+            <button class="delete" aria-label="close" onclick="closeModal('comparisonResultModal')"></button>
+        </header>
+        <section class="modal-card-body">
+            <div id="comparisonResult" class="columns">
+                <!-- Résultats de la comparaison vont être ajoutés ici dynamiquement -->
+            </div>
+        </section>
+    </div>
+</div>
+
     
 
     <div class="modal" id="teamModal">

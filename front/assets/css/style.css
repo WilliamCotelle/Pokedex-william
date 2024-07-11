@@ -311,3 +311,43 @@ button {
     height: 20px;
     background-color: #4CAF50; /* Adjust this color */
 }
+.pokemon-selection {
+    max-height: 400px;
+    overflow-y: scroll;
+    border: 1px solid #ddd;
+    padding: 10px;
+    background-color: #f9f9f9;
+}
+
+.selectable-pokemon {
+    width: 100px;
+    height: auto;
+    cursor: pointer;
+    margin: 5px;
+    border: 2px solid transparent;
+}
+
+.selectable-pokemon:hover {
+    border-color: #00d1b2; /* Bulma primary color */
+}
+
+.modal-comparison-card {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    width: 80%;
+    background-color: white;
+}
+
+.modal-background {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-pokemon-img {
+    display: block;
+    margin: 0 auto 20px;
+    width: 150px;
+    height: auto;
+}
