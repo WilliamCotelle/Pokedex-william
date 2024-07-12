@@ -2,6 +2,19 @@ const express = require('express');
 const router = express.Router();
 const { Pokemon, Type } = require('../models');
 
+// Obtenir le classement
+router.get('/ranking', async (req, res) => {
+  try {
+      const ranking = await Pokemon.findAll({
+          order: [['votes', 'DESC']],
+          limit: 10, // Limite à 10 Pokémon par exemple
+      });
+      res.json(ranking);
+  } catch (error) {
+      res.status(500).json({ error: error.message });
+  }
+});
+
 // Obtenir tous les Pokémons
 router.get('/', async (req, res) => {
   const pokemons = await Pokemon.findAll({ include: [Type] });
@@ -33,19 +46,6 @@ router.post('/:id/vote', async (req, res) => {
   }
 });
 
-// Route pour récupérer le classement des Pokémon
-router.get('/ranking', async (req, res) => {
-  try {
-    const ranking = await Pokemon.findAll({
-      order: [['votes', 'DESC']],
-      limit: 10 // Limiter à 10 Pokémon les plus votés
-    });
 
-    res.status(200).json(ranking);
-  } catch (error) {
-    res.status(500).send('Error fetching ranking');
-  }
-});
 
 module.exports = router;
-  

@@ -306,17 +306,34 @@ h2.title.is-4 {
     background-color: #f9f9f9;
 }
 
+.pokemon-selects-container {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding: 10px 0;
+}
+
 .selectable-pokemon {
     width: 100px;
-    height: auto;
+    height: 100px;
+    object-fit: cover;
     cursor: pointer;
     margin: 5px;
     border: 2px solid transparent;
+    border-radius: 10px;
+    transition: transform 0.2s, border-color 0.2s;
 }
 
 .selectable-pokemon:hover {
-    border-color: #00d1b2; /* Bulma primary color */
+    transform: scale(1.1);
 }
+
+.selectable-pokemon.selected {
+    border-color: #ffcc00; /* Couleur de la bordure pour les Pokémon sélectionnés */
+    transform: scale(1.1);
+}
+
+
 .pokemon-stats {
     padding: 1rem;
 }
@@ -476,6 +493,74 @@ img.pokemon-team-img {
     opacity: 0;
 }
 
+.podium {
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+.podium-item {
+    text-align: center;
+    margin: 0 10px;
+}
+
+.podium-1 {
+    order: 1;
+    background-color: gold;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.podium-2 {
+    order: 0;
+    background-color: silver;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.podium-3 {
+    order: 2;
+    background-color: #cd7f32; /* Bronze color */
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.podium-img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+}
+
+.podium-name {
+    display: block;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.podium-votes {
+    display: block;
+    color: #777;
+}
+.title.is-4 {
+    font-size: 1.5rem;
+    background: #12101078;
+    border-radius: 1rem;
+    padding: 0.5rem;
+}
+
+.description-box {
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    white-space: pre-wrap; /* Pour conserver les sauts de ligne */
+    background-color: #f9f9f9;
+    margin-bottom: 20px;
+}
+
+.navbar-item img {
+    max-height: 6.75rem;
+}
 
 /* Responsive styles */
 @media (max-width: 768px) {

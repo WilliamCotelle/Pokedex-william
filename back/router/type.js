@@ -19,7 +19,14 @@ router.get('/:id/pokemons', async (req, res) => {
     if (!type) {
       return res.status(404).json({ error: 'Type non trouvé' });
     }
-    const pokemons = await type.getPokemons();
+    const pokemons = await type.getPokemons({
+      include: [
+        {
+          model: Type,
+          attributes: ['name', 'color']
+        }
+      ]
+    });
     res.json(pokemons);
   } catch (error) {
     res.status(500).json({ error: 'Erreur lors de la récupération des Pokémons par Type' });

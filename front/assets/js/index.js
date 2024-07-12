@@ -18,6 +18,69 @@ const getPokemons = async () => {
     }
 };
 
+const getPokemonsByType = async (typeId) => {
+    try {
+        const response = await fetch(`http://localhost:3000/api/types/${typeId}/pokemons`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const pokemons = await response.json();
+        // Assurez-vous que la couleur du type est ajoutée
+        const enrichedPokemons = pokemons.map(pokemon => {
+            if (pokemon.Types && pokemon.Types[0]) {
+                pokemon.color = pokemon.Types[0].color.toLowerCase();
+            }
+            return pokemon;
+        });
+        return enrichedPokemons;
+    } catch (error) {
+        console.log('Error fetching pokemons by type:', error);
+    }
+};
+
+const populateTypeSelector = async () => {
+    const typeSelector = document.getElementById('typeSelector');
+    typeSelector.innerHTML = '<option value="">Tous les types</option>';
+
+    try {
+        const response = await fetch('http://localhost:3000/api/types');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const types = await response.json();
+        types.forEach(type => {
+            const option = document.createElement('option');
+            option.value = type.id;
+            option.textContent = type.name;
+            typeSelector.appendChild(option);
+        });
+    } catch (error) {
+        console.log('Error populating type selector:', error);
+    }
+};
+
+const handleTypeChange = async (event) => {
+    const typeId = event.target.value;
+    let pokemons;
+    if (typeId) {
+        pokemons = await getPokemonsByType(typeId);
+    } else {
+        pokemons = await getPokemons();
+    }
+    displayPokemons(pokemons);
+};
+
+const displayPokemons = (pokemons) => {
+    const pokemonList = document.getElementById('pokemon-list');
+    pokemonList.innerHTML = '';
+    pokemons.forEach(pokemon => {
+        if (pokemon.Types && pokemon.Types[0]) {
+            pokemon.color = pokemon.Types[0].color.toLowerCase();
+        }
+        pokemonList.appendChild(createPokemonCardElem(pokemon));
+    });
+};
+
 let typeMap = {};
 // Fonction pour sélectionner les types depuis l'API
 const getTypes = async () => {
@@ -91,18 +154,7 @@ function createPokemonCardElem(pokemonData) {
 const fetchAndDisplayPokemons = async () => {
     try {
         const pokemons = await getPokemons();
-
-        const pokemonList = document.getElementById('pokemon-list');
-        pokemonList.innerHTML = '';
-        for (let i = 0; i < pokemons.length; i++) {
-            const pokemon = pokemons[i];
-            if (pokemon.type) {
-                pokemon.color = typeMap[pokemon.type];
-            }
-            pokemonList.appendChild(createPokemonCardElem(pokemon));
-        }
-
-        populatePokemonSelects(pokemons);
+        displayPokemons(pokemons);
     } catch (error) {
         console.log('Error displaying pokemons:', error);
     }
@@ -123,7 +175,6 @@ const fetchPokemonDetails = async (pokemonId) => {
 
     return pokemon;
 };
-
 
 // Met à jour le contenu de la modal
 const updateModalContent = (pokemon) => {
@@ -203,8 +254,14 @@ const updateModalContent = (pokemon) => {
 
 // Affiche la modal
 const showModal = (modalId) => {
+    console.log(`Attempting to show modal with ID: ${modalId}`); // Débogage
     const modal = document.getElementById(modalId);
-    modal.classList.add('is-active');
+    if (modal) {
+        modal.classList.add('is-active');
+        console.log(`Modal with ID: ${modalId} is now active`); // Débogage
+    } else {
+        console.log(`Modal with ID: ${modalId} not found`); // Débogage
+    }
 };
 
 // Cache la modal
@@ -247,14 +304,13 @@ const openTeamDetailModal = async (teamId) => {
         modalDescription.textContent = team.description;
         pokemonList.innerHTML = ''; // Clear previous list
 
-        for (let i = 0; i < team.Pokemons.length; i++) {
-            const pokemon = team.Pokemons[i];
+        team.Pokemons.forEach(pokemon => {
             const pokemonImg = document.createElement('img');
             pokemonImg.src = `./assets/img/${pokemon.id}.webp`;
             pokemonImg.alt = pokemon.name;
             pokemonImg.classList.add('pokemon-team-img');
             pokemonList.appendChild(pokemonImg);
-        }
+        });
 
         showModal('teamDetailModal');
     } catch (error) {
@@ -309,19 +365,15 @@ const handleTeamFormSubmit = async (event) => {
     const teamName = document.getElementById('teamName').value;
     const teamDescription = document.getElementById('teamDescription').value;
 
-    const pokemonSelects = document.getElementById('pokemonSelects').querySelectorAll('select');
-    const selectedPokemons = [];
-    for (let i = 0; i < pokemonSelects.length; i++) {
-        const select = pokemonSelects[i];
-        const pokemonId = select.value;
-        if (pokemonId !== '') {
-            selectedPokemons.push(pokemonId);
-        }
+    if (selectedPokemons.length !== 5) {
+        alert('Veuillez sélectionner exactement 5 Pokémon.');
+        return;
     }
 
     await addTeam(teamName, teamDescription, selectedPokemons);
     closeTeamModal();
     document.getElementById('teamForm').reset();
+    selectedPokemons.length = 0; // Réinitialiser les Pokémon sélectionnés
 };
 
 //écouteur d'événement pour le formulaire de création d'équipe
@@ -534,31 +586,38 @@ const closeComparisonResultModal = () => {
     closeModal('comparisonResultModal');
 };
 
+const selectedPokemons = [];
+
 const populateTeamPokemonSelects = async () => {
     const pokemonSelectsContainer = document.getElementById('pokemonSelects');
     pokemonSelectsContainer.innerHTML = '';
 
     const pokemons = await getPokemons();
 
-    for (let i = 0; i < 5; i++) {
-        const select = document.createElement('select');
-        select.classList.add('input', 'mb-2');
+    pokemons.forEach(pokemon => {
+        const img = document.createElement('img');
+        img.src = `./assets/img/${pokemon.id}.webp`;
+        img.alt = pokemon.name;
+        img.classList.add('selectable-pokemon');
+        img.dataset.id = pokemon.id;
+        img.title = pokemon.name;
 
-        const defaultOption = document.createElement('option');
-        defaultOption.value = '';
-        defaultOption.textContent = 'Sélectionnez un Pokémon';
-        select.appendChild(defaultOption);
+        img.addEventListener('click', () => {
+            if (selectedPokemons.includes(pokemon.id)) {
+                selectedPokemons.splice(selectedPokemons.indexOf(pokemon.id), 1);
+                img.classList.remove('selected');
+            } else {
+                if (selectedPokemons.length < 5) { // Limiter à 5 Pokémon
+                    selectedPokemons.push(pokemon.id);
+                    img.classList.add('selected');
+                } else {
+                    alert('Vous ne pouvez sélectionner que 5 Pokémon.');
+                }
+            }
+        });
 
-        for (let j = 0; j < pokemons.length; j++) {
-            const pokemon = pokemons[j];
-            const option = document.createElement('option');
-            option.value = pokemon.id;
-            option.textContent = pokemon.name;
-            select.appendChild(option);
-        }
-
-        pokemonSelectsContainer.appendChild(select);
-    }
+        pokemonSelectsContainer.appendChild(img);
+    });
 };
 
 // ===========vote=============
@@ -619,29 +678,77 @@ const openRankingModal = async () => {
     }
 };
 
-// Fonction pour mettre à jour le contenu de la modal de classement
 const updateRankingModalContent = (ranking) => {
     const rankingList = document.getElementById('rankingList');
-    rankingList.innerHTML = '';
+    rankingList.innerHTML = '<h3 class="title is-4">Les Pokémon les plus aimés</h3>';
 
-    for (let i = 0; i < ranking.length; i++) {
-        const pokemon = ranking[i];
+    const podium = document.createElement('div');
+    podium.classList.add('podium');
+
+    ranking.slice(0, 3).forEach((pokemon, index) => {
         const listItem = document.createElement('div');
-        listItem.classList.add('ranking-item');
-        listItem.textContent = `${i + 1}. ${pokemon.name} - ${pokemon.votes} votes`;
-        rankingList.appendChild(listItem);
-    }
+        listItem.classList.add('podium-item');
+
+        // Ajouter une classe spécifique pour chaque position
+        listItem.classList.add(`podium-${index + 1}`);
+
+        const img = document.createElement('img');
+        img.src = `./assets/img/${pokemon.id}.webp`;
+        img.alt = pokemon.name;
+        img.classList.add('podium-img');
+
+        const name = document.createElement('span');
+        name.classList.add('podium-name');
+        name.textContent = pokemon.name;
+
+        const votes = document.createElement('span');
+        votes.classList.add('podium-votes');
+        votes.textContent = `${pokemon.votes} votes`;
+
+        listItem.appendChild(img);
+        listItem.appendChild(name);
+        listItem.appendChild(votes);
+
+        podium.appendChild(listItem);
+    });
+
+    rankingList.appendChild(podium);
 };
 
-// Attendre que le document soit prêt
 document.addEventListener("DOMContentLoaded", async () => {
+    console.log('DOMContentLoaded event triggered'); // Debugging
+
+    // Fetch types and pokemons
     await getTypes();
     const pokemons = await getPokemons();
+
+    // Display pokemons and teams
     await fetchAndDisplayPokemons();
     await fetchAndDisplayTeams();
+    await populateTypeSelector(); // Ajouter cette ligne
 
+    // Add event listener for adding team button
+    const addTeamBtn = document.getElementById('addTeamBtn');
+    if (addTeamBtn) {
+        addTeamBtn.addEventListener('click', openAddTeamModal);
+    }
+
+    // Add event listener for ranking button
+    const rankingBtn = document.getElementById('ranking');
+    if (rankingBtn) {
+        rankingBtn.addEventListener('click', openRankingModal);
+    }
+
+    // Add event listener for type selector
+    const typeSelector = document.getElementById('typeSelector');
+    if (typeSelector) {
+        typeSelector.addEventListener('change', handleTypeChange);
+    }
+
+    // Populate pokemon selects
     populatePokemonSelects(pokemons);
 
+    // Add event listener for pokemon cards
     document.addEventListener('click', (event) => {
         const pokemonCard = event.target.closest('.pokemon-card');
         if (pokemonCard && !event.target.closest('.comment-react')) {
@@ -650,32 +757,41 @@ document.addEventListener("DOMContentLoaded", async () => {
         }
     });
 
+    // Add event listener for closing modals
     document.querySelectorAll('.modal .delete').forEach(button => {
         button.addEventListener('click', () => {
             closeModal(button.closest('.modal').id);
         });
     });
 
+    // Add event listener for modal backgrounds
     document.querySelectorAll('.modal-background').forEach(background => {
         background.addEventListener('click', () => {
             closeModal(background.closest('.modal').id);
         });
     });
 
-    document.getElementById('compare-pokemons').addEventListener('click', () => {
-        showModal('compareModal');
-    });
+    // Add event listener for compare button in compare modal
+    const comparePokemonsBtn = document.getElementById('compare-pokemons');
+    if (comparePokemonsBtn) {
+        comparePokemonsBtn.addEventListener('click', () => {
+            console.log('Compare Pokemons button clicked'); // Debugging
+            showModal('compareModal');
+        });
+    }
 
-    document.getElementById('compareBtn').addEventListener('click', comparePokemons);
+    // Add event listener for compare button in the modal
+    const compareBtn = document.getElementById('compareBtn');
+    if (compareBtn) {
+        compareBtn.addEventListener('click', comparePokemons);
+    }
 
+    // Add event listener for closing the comparison result modal
     document.querySelectorAll('.modal .delete').forEach(button => {
         button.addEventListener('click', closeComparisonResultModal);
     });
+
     document.querySelectorAll('.modal-background').forEach(background => {
         background.addEventListener('click', closeComparisonResultModal);
     });
-
-    document.getElementById('addTeamBtn').addEventListener('click', openAddTeamModal);
-
-    document.getElementById('ranking').addEventListener('click', openRankingModal);
 });

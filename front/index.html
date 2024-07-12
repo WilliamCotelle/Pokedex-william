@@ -30,8 +30,6 @@
             <div class="navbar-start">
                 <a class="navbar-item" href="#" id="ranking">Classement</a>
                 <a class="navbar-item" href="#" id="compare-pokemons">Comparer</a>
-                <a class="navbar-item" href="#" id="login">Login</a>
-                <a class="navbar-item" href="#" id="contact">Contact</a>
             </div>
             <div class="navbar-end">
                 <div class="navbar-item">
@@ -60,6 +58,17 @@
             </aside>
             <main class="column">
                 <h2 class="title is-4">POKEMONS LIST</h2>
+                <div class="field mb-4">
+                    <label class="label">Filtrer par type</label>
+                    <div class="control">
+                        <div class="select">
+                            <select id="typeSelector">
+                                <option value="">Tous les types</option>
+                                <!-- Les options de type seront ajoutées ici dynamiquement -->
+                            </select>
+                        </div>
+                    </div>
+                </div>
                 <div class="columns is-multiline" id="pokemon-list">
                     <!-- Les pokémons vont être ajoutés ici dynamiquement -->
                 </div>
@@ -77,7 +86,7 @@
             </header>
             <section class="modal-card-body">
                 <div class="pokemon-detail-header">
-                    <img id="pokemonImage" class="pokemon-image" src="" alt="Pokemon Image">
+                    <img id="pokemonImage" class="pokemon-image" alt="Pokemon Image">
                     <div class="pokemon-basic-info">
                         <h2 id="pokemonName">Bulbasaur</h2>
                         <!-- si on veut ajouter poid type ect ici -->
@@ -144,7 +153,7 @@
 </div>
 
     
-<!-- modal pour ajouter une nouvelle equipe -->
+<!-- modal pour ajouter une nouvelle équipe -->
 <div id="teamModal" class="modal">
     <div class="modal-background" onclick="closeTeamModal()"></div>
     <div class="modal-card">
@@ -164,16 +173,19 @@
                         <textarea id="teamDescription" class="textarea" required placeholder="Description de la team"></textarea>
                     </div>
                 </div>
-                <div id="pokemonSelects" class="field">
-                    <!-- Les sélections de Pokémon seront insérées ici -->
+                <div class="field">
+                    <p class="title is-5">Choisissez vos 5 Pokémon pour votre équipe</p>
+                    <div id="pokemonSelects" class="pokemon-selects-container">
+                        <!-- Les images des Pokémon seront insérées ici -->
+                    </div>
                 </div>
-                <button type="submit" class="button is-warning">Ajouter l'équipe</button>
+                <div class="field">
+                    <button type="submit" class="button is-warning">Ajouter l'équipe</button>
+                </div>
             </form>
         </section>
     </div>
 </div>
-
-
 
 <!-- modal de détails de l'équipe -->
 <div id="teamDetailModal" class="modal">
@@ -183,11 +195,11 @@
             <p id="teamDetailModalLabel" class="modal-card-title">Détails de l'équipe</p>
             <button class="delete" aria-label="close" onclick="closeModal('teamDetailModal')">&times;</button>
         </header>
-        <section class="modal-card-body"> 
+        <section class="modal-card-body">
             <div class="field">
-                <div class="pokemon-list-title">Déscription de la team:</div>
-                <div class="control">
-                    <textarea id="teamDetailDescription" class="textarea" readonly placeholder="Description de la team"></textarea>
+                <div class="pokemon-list-title">Description de la team:</div>
+                <div id="teamDetailDescription" class="description-box">
+                    <!-- La description sera insérée ici -->
                 </div>
             </div>
             <div class="pokemon-list-title">Pokémon de la team:</div>
@@ -222,7 +234,3 @@
     <script src="./assets/js/navBar.js"></script>
 </body>
 </html>
-
-
-
-
