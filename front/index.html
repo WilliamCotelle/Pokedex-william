@@ -28,8 +28,7 @@
     
         <div class="navbar-menu">
             <div class="navbar-start">
-                <a class="navbar-item" href="#">Accueil</a>
-                <a class="navbar-item" href="#" id="view-teams">Voir les équipes</a>
+                <a class="navbar-item" href="#" id="ranking">Classement</a>
                 <a class="navbar-item" href="#" id="compare-pokemons">Comparer</a>
                 <a class="navbar-item" href="#" id="login">Login</a>
                 <a class="navbar-item" href="#" id="contact">Contact</a>
@@ -202,11 +201,21 @@
     </div>
 </div>
 
-
-
-
-
-
+<!-- Modal pour le classement des Pokémon les plus votés -->
+<div class="modal" id="rankingModal">
+    <div class="modal-background"></div>
+    <div class="modal-card modal-ranking-card">
+        <header class="modal-card-head">
+            <p class="modal-card-title">Classement des Pokémon</p>
+            <button class="delete" aria-label="close" onclick="closeModal('rankingModal')"></button>
+        </header>
+        <section class="modal-card-body">
+            <div id="rankingList" class="ranking-list">
+                <!-- Le classement des Pokémon sera ajouté ici dynamiquement -->
+            </div>
+        </section>
+    </div>
+</div>
 
     <!-- Custom JS -->
     <script src="./assets/js/index.js"></script>

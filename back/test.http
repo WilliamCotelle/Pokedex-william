@@ -41,3 +41,23 @@ Content-Type: application/json
   "description": "This is a test team.",
   "pokemons": [1, 2, 3, 4, 5]
 }
+
+### Enregistrer un vote pour le Pokémon avec l'ID 1
+POST http://localhost:3000/api/pokemons/1/vote
+Content-Type: application/json
+
+{
+  "votes": 1
+}
+
+### Enregistrer un vote pour le Pokémon avec l'ID 2
+POST http://localhost:3000/api/pokemons/2/vote
+Content-Type: application/json
+
+{
+  "votes": 5
+}
+
+### Récupérer le classement des Pokémon les plus votés
+GET http://localhost:3000/api/pokemons/ranking
+

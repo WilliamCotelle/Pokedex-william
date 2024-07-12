@@ -11,12 +11,12 @@ const getPokemons = async () => {
                 pokemon.color = pokemon.Types[0].color.toLowerCase();
             }
             return pokemon;
-        })
+        });
         return pokemons;
     } catch (error) {
         console.log('Error fetching pokemons:', error);
     }
-}
+};
 
 let typeMap = {};
 // Fonction pour sélectionner les types depuis l'API
@@ -39,7 +39,7 @@ const getTypes = async () => {
 function createPokemonCardElem(pokemonData) {
     const pokemonCard = document.createElement('div');
     pokemonCard.classList.add('pokemon-card', 'column', 'is-one-quarter');
-    
+
     if (pokemonData.color) {
         pokemonCard.style.background = pokemonData.color;
     }
@@ -55,9 +55,34 @@ function createPokemonCardElem(pokemonData) {
     pokemonNumberPokedex.classList.add('pokemon-number');
     pokemonNumberPokedex.textContent = `N°${pokemonData.id}`;
 
+    const voteButton = document.createElement('div');
+    voteButton.innerHTML = `
+    <div class="comment-react">
+    <button onclick="votePokemon(${pokemonData.id})">
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="22"
+        height="22"
+        viewBox="0 0 24 24"
+        fill="none"
+      >
+        <path
+          d="M19.4626 3.99415C16.7809 2.34923 14.4404 3.01211 13.0344 4.06801C12.4578 4.50096 12.1696 4.71743 12 4.71743C11.8304 4.71743 11.5422 4.50096 10.9656 4.06801C9.55962 3.01211 7.21909 2.34923 4.53744 3.99415C1.01807 6.15294 0.221721 13.2749 8.33953 19.2834C9.88572 20.4278 10.6588 21 12 21C13.3412 21 14.1143 20.4278 15.6605 19.2834C23.7783 13.2749 22.9819 6.15294 19.4626 3.99415Z"
+          stroke="#707277"
+          stroke-width="2"
+          stroke-linecap="round"
+          fill="#707277"
+        ></path>
+      </svg>
+    </button>
+    <span id="vote-count-${pokemonData.id}">${pokemonData.votes || 0}</span>
+  </div>
+    `;
+
     pokemonCard.appendChild(pokemonImage);
     pokemonCard.appendChild(pokemonName);
     pokemonCard.appendChild(pokemonNumberPokedex);
+    pokemonCard.appendChild(voteButton);
     pokemonCard.dataset.id = pokemonData.id;
     return pokemonCard;
 }
@@ -66,10 +91,11 @@ function createPokemonCardElem(pokemonData) {
 const fetchAndDisplayPokemons = async () => {
     try {
         const pokemons = await getPokemons();
-        
+
         const pokemonList = document.getElementById('pokemon-list');
         pokemonList.innerHTML = '';
-        for (const pokemon of pokemons) {
+        for (let i = 0; i < pokemons.length; i++) {
+            const pokemon = pokemons[i];
             if (pokemon.type) {
                 pokemon.color = typeMap[pokemon.type];
             }
@@ -98,6 +124,7 @@ const fetchPokemonDetails = async (pokemonId) => {
     return pokemon;
 };
 
+
 // Met à jour le contenu de la modal
 const updateModalContent = (pokemon) => {
     const modalTitle = document.getElementById('pokemonModalLabel');
@@ -120,14 +147,18 @@ const updateModalContent = (pokemon) => {
     const pokemonBasicInfo = document.createElement('div');
     pokemonBasicInfo.classList.add('pokemon-basic-info');
 
-    const pokemonName = document.createElement('h2');
-    pokemonName.textContent = pokemon.name;
-
-    if (pokemon.color) {
-        document.querySelector('#pokemonModal .modal-card').style.background = pokemon.color;
+    const pokemonTypes = document.createElement('div');
+    pokemonTypes.classList.add('pokemon-types');
+    for (let i = 0; i < pokemon.Types.length; i++) {
+        const type = pokemon.Types[i];
+        const typeSpan = document.createElement('span');
+        typeSpan.classList.add('pokemon-type');
+        typeSpan.textContent = type.name;
+        typeSpan.style.background = type.color;
+        pokemonTypes.appendChild(typeSpan);
     }
 
-    pokemonBasicInfo.append(pokemonName);
+    pokemonBasicInfo.append(pokemonTypes);
     pokemonDetailHeader.append(pokemonImg, pokemonBasicInfo);
 
     const pokemonStats = document.createElement('div');
@@ -216,11 +247,8 @@ const openTeamDetailModal = async (teamId) => {
         modalDescription.textContent = team.description;
         pokemonList.innerHTML = ''; // Clear previous list
 
-        // const pokemonsTitle = document.createElement('h3');
-        // pokemonsTitle.textContent = 'Pokémons de la team';
-        // pokemonList.appendChild(pokemonsTitle);
-
-        for (const pokemon of team.Pokemons) {
+        for (let i = 0; i < team.Pokemons.length; i++) {
+            const pokemon = team.Pokemons[i];
             const pokemonImg = document.createElement('img');
             pokemonImg.src = `./assets/img/${pokemon.id}.webp`;
             pokemonImg.alt = pokemon.name;
@@ -282,7 +310,14 @@ const handleTeamFormSubmit = async (event) => {
     const teamDescription = document.getElementById('teamDescription').value;
 
     const pokemonSelects = document.getElementById('pokemonSelects').querySelectorAll('select');
-    const selectedPokemons = Array.from(pokemonSelects).map(select => select.value).filter(pokemonId => pokemonId !== '');
+    const selectedPokemons = [];
+    for (let i = 0; i < pokemonSelects.length; i++) {
+        const select = pokemonSelects[i];
+        const pokemonId = select.value;
+        if (pokemonId !== '') {
+            selectedPokemons.push(pokemonId);
+        }
+    }
 
     await addTeam(teamName, teamDescription, selectedPokemons);
     closeTeamModal();
@@ -304,13 +339,14 @@ const getTeams = async () => {
     } catch (error) {
         console.log('Error fetching teams:', error);
     }
-}
+};
 
 // Fonction pour afficher les équipes dans la liste
 const displayTeams = (teams) => {
     const teamList = document.getElementById('team-list');
     teamList.innerHTML = '';
-    for (const team of teams) {
+    for (let i = 0; i < teams.length; i++) {
+        const team = teams[i];
         const teamCard = document.createElement('div');
         teamCard.classList.add('team-card');
         teamCard.dataset.id = team.id;
@@ -337,7 +373,7 @@ const fetchAndDisplayTeams = async () => {
     } catch (error) {
         console.log('Error displaying teams:', error);
     }
-}
+};
 
 // =============comparer poké=============
 let selectedPokemon1 = null;
@@ -351,13 +387,14 @@ const populatePokemonSelects = (pokemons) => {
     pokemon1Selection.innerHTML = '';
     pokemon2Selection.innerHTML = '';
 
-    for (const pokemon of pokemons) {
+    for (let i = 0; i < pokemons.length; i++) {
+        const pokemon = pokemons[i];
         const img1 = document.createElement('img');
         img1.src = `./assets/img/${pokemon.id}.webp`;
         img1.alt = pokemon.name;
         img1.classList.add('selectable-pokemon');
         img1.dataset.id = pokemon.id;
-        img1.title = pokemon.name; // Pour afficher le nom au survol
+        img1.title = pokemon.name;
         img1.onclick = () => selectPokemon(1, pokemon.id);
 
         const img2 = document.createElement('img');
@@ -365,7 +402,7 @@ const populatePokemonSelects = (pokemons) => {
         img2.alt = pokemon.name;
         img2.classList.add('selectable-pokemon');
         img2.dataset.id = pokemon.id;
-        img2.title = pokemon.name; // Pour afficher le nom au survol
+        img2.title = pokemon.name;
         img2.onclick = () => selectPokemon(2, pokemon.id);
 
         pokemon1Selection.appendChild(img1);
@@ -406,7 +443,6 @@ const displayComparison = (pokemon1, pokemon2) => {
     const pokemon2Column = document.createElement('div');
     pokemon2Column.classList.add('column');
 
-    // Afficher les images des Pokémon au-dessus des statistiques
     const img1 = document.createElement('img');
     img1.src = `./assets/img/${pokemon1.id}.webp`;
     img1.alt = pokemon1.name;
@@ -419,6 +455,31 @@ const displayComparison = (pokemon1, pokemon2) => {
 
     pokemon1Column.appendChild(img1);
     pokemon2Column.appendChild(img2);
+
+    const pokemon1Types = document.createElement('div');
+    pokemon1Types.classList.add('pokemon-types');
+    for (let i = 0; i < pokemon1.Types.length; i++) {
+        const type = pokemon1.Types[i];
+        const typeSpan = document.createElement('span');
+        typeSpan.classList.add('pokemon-type');
+        typeSpan.textContent = type.name;
+        typeSpan.style.background = type.color;
+        pokemon1Types.appendChild(typeSpan);
+    }
+
+    const pokemon2Types = document.createElement('div');
+    pokemon2Types.classList.add('pokemon-types');
+    for (let i = 0; i < pokemon2.Types.length; i++) {
+        const type = pokemon2.Types[i];
+        const typeSpan = document.createElement('span');
+        typeSpan.classList.add('pokemon-type');
+        typeSpan.textContent = type.name;
+        typeSpan.style.background = type.color;
+        pokemon2Types.appendChild(typeSpan);
+    }
+
+    pokemon1Column.appendChild(pokemon1Types);
+    pokemon2Column.appendChild(pokemon2Types);
 
     const createStatElement = (label, value) => {
         const stat = document.createElement('div');
@@ -463,7 +524,6 @@ const displayComparison = (pokemon1, pokemon2) => {
     comparisonResult.appendChild(pokemon1Column);
     comparisonResult.appendChild(pokemon2Column);
 
-    // Affiche la modal de comparaison des résultats
     showModal('comparisonResultModal');
 };
 
@@ -489,14 +549,87 @@ const populateTeamPokemonSelects = async () => {
         defaultOption.textContent = 'Sélectionnez un Pokémon';
         select.appendChild(defaultOption);
 
-        pokemons.forEach(pokemon => {
+        for (let j = 0; j < pokemons.length; j++) {
+            const pokemon = pokemons[j];
             const option = document.createElement('option');
             option.value = pokemon.id;
             option.textContent = pokemon.name;
             select.appendChild(option);
-        });
+        }
 
         pokemonSelectsContainer.appendChild(select);
+    }
+};
+
+// ===========vote=============
+let voteCounts = {}; // Stocke le nombre de votes pour chaque Pokémon
+
+const votePokemon = async (pokemonId) => {
+    try {
+        if (!voteCounts[pokemonId]) {
+            voteCounts[pokemonId] = 0;
+        }
+        voteCounts[pokemonId]++;
+
+        document.getElementById(`vote-count-${pokemonId}`).textContent = voteCounts[pokemonId];
+
+        const response = await fetch(`http://localhost:3000/api/pokemons/${pokemonId}/vote`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ votes: voteCounts[pokemonId] })
+        });
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        console.log(`Vote enregistré pour le Pokémon ID: ${pokemonId}`);
+
+        showVoteNotification();
+    } catch (error) {
+        console.log('Error voting for pokemon:', error);
+    }
+};
+
+// Fonction pour afficher la notification de succès
+const showVoteNotification = () => {
+    const notification = document.createElement('div');
+    notification.classList.add('vote-notification');
+    notification.textContent = 'Votre vote a été enregistré !';
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+        notification.classList.add('hide');
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 500);
+    }, 2000);
+};
+
+// Fonction pour ouvrir la modal de classement
+const openRankingModal = async () => {
+    try {
+        const response = await fetch('http://localhost:3000/api/pokemons/ranking');
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const ranking = await response.json();
+        updateRankingModalContent(ranking);
+        showModal('rankingModal');
+    } catch (error) {
+        console.log('Error fetching ranking:', error);
+    }
+};
+
+// Fonction pour mettre à jour le contenu de la modal de classement
+const updateRankingModalContent = (ranking) => {
+    const rankingList = document.getElementById('rankingList');
+    rankingList.innerHTML = '';
+
+    for (let i = 0; i < ranking.length; i++) {
+        const pokemon = ranking[i];
+        const listItem = document.createElement('div');
+        listItem.classList.add('ranking-item');
+        listItem.textContent = `${i + 1}. ${pokemon.name} - ${pokemon.votes} votes`;
+        rankingList.appendChild(listItem);
     }
 };
 
@@ -509,16 +642,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     populatePokemonSelects(pokemons);
 
-    // Écouteur d'événements pour les cartes de pokémon
     document.addEventListener('click', (event) => {
         const pokemonCard = event.target.closest('.pokemon-card');
-        if (pokemonCard) {
+        if (pokemonCard && !event.target.closest('.comment-react')) {
             const pokemonId = pokemonCard.dataset.id;
             openPokemonDetailModal(pokemonId);
         }
     });
 
-    // Écouteurs pour fermer les modals
     document.querySelectorAll('.modal .delete').forEach(button => {
         button.addEventListener('click', () => {
             closeModal(button.closest('.modal').id);
@@ -531,15 +662,12 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     });
 
-    // Ouvrir la modal de comparaison
     document.getElementById('compare-pokemons').addEventListener('click', () => {
         showModal('compareModal');
     });
 
-    // Comparer les Pokémon
     document.getElementById('compareBtn').addEventListener('click', comparePokemons);
 
-    // Fermer la modal de comparaison des résultats
     document.querySelectorAll('.modal .delete').forEach(button => {
         button.addEventListener('click', closeComparisonResultModal);
     });
@@ -547,6 +675,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         background.addEventListener('click', closeComparisonResultModal);
     });
 
-    // Ouvrir la modal d'ajout d'équipe
     document.getElementById('addTeamBtn').addEventListener('click', openAddTeamModal);
+
+    document.getElementById('ranking').addEventListener('click', openRankingModal);
 });

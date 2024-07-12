@@ -1,7 +1,6 @@
 const { DataTypes, Model } = require('sequelize');
 const sequelize = require('../config/database');
 
-
 class Pokemon extends Model {}
 
 Pokemon.init({
@@ -39,10 +38,13 @@ Pokemon.init({
     type: DataTypes.INTEGER,
     allowNull: false,
   },
+  votes: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0,  // Initialiser à 0
+  },
 }, {
   sequelize,
   modelName: 'Pokemon',
 });
-
 
 module.exports = Pokemon;
