@@ -1,32 +1,29 @@
-const { sequelize, Type, Pokemon, PokemonType, Team } = require('./models');
+const { sequelize, Type, Pokemon, PokemonType, Team, TeamPokemon } = require('./models');
 
 const seedDatabase = async () => {
   try {
     await sequelize.sync({ force: true }); // Réinitialiser la base de données
 
-
-// Insertion des types
-const types = [
-  { name: 'Acier', color: 'linear-gradient(45deg, #787887, #b8b8d0)' },
-  { name: 'Combat', color: 'linear-gradient(45deg, #7d1f1a, #c03028)' },
-  { name: 'Dragon', color: 'linear-gradient(45deg, #4924a1, #7038f8)' },
-  { name: 'Eau', color: 'linear-gradient(45deg, #3b5796, #6890f0)' },
-  { name: 'Électrik', color: 'linear-gradient(45deg, #a1871f, #f8d030)' },
-  { name: 'Feu', color: 'linear-gradient(45deg, #b23300, #f08030)' },
-  { name: 'Glace', color: 'linear-gradient(45deg, #638d8d, #98d8d8)' },
-  { name: 'Insecte', color: 'linear-gradient(45deg, #6d7815, #a8b820)' },
-  { name: 'Normal', color: 'linear-gradient(45deg, #6d6d4e, #a8a878)' },
-  { name: 'Plante', color: 'linear-gradient(45deg, #4e8234, #78c850)' },
-  { name: 'Poison', color: 'linear-gradient(45deg, #5d1a5d, #a040a0)' },
-  { name: 'Psy', color: 'linear-gradient(45deg, #a13959, #f85888)' },
-  { name: 'Roche', color: 'linear-gradient(45deg, #786824, #b8a038)' },
-  { name: 'Sol', color: 'linear-gradient(45deg, #927d44, #e0c068)' },
-  { name: 'Spectre', color: 'linear-gradient(45deg, #4b3b67, #705898)' },
-  { name: 'Ténèbres', color: 'linear-gradient(45deg, #49392f, #705848)' },
-  { name: 'Vol', color: 'linear-gradient(45deg, #6d5eb7, #a890f0)' }
-];
-
-
+    // Insertion des types
+    const types = [
+      { name: 'Acier', color: 'linear-gradient(45deg, #787887, #b8b8d0)' },
+      { name: 'Combat', color: 'linear-gradient(45deg, #7d1f1a, #c03028)' },
+      { name: 'Dragon', color: 'linear-gradient(45deg, #4924a1, #7038f8)' },
+      { name: 'Eau', color: 'linear-gradient(45deg, #3b5796, #6890f0)' },
+      { name: 'Électrik', color: 'linear-gradient(45deg, #a1871f, #f8d030)' },
+      { name: 'Feu', color: 'linear-gradient(45deg, #b23300, #f08030)' },
+      { name: 'Glace', color: 'linear-gradient(45deg, #638d8d, #98d8d8)' },
+      { name: 'Insecte', color: 'linear-gradient(45deg, #6d7815, #a8b820)' },
+      { name: 'Normal', color: 'linear-gradient(45deg, #6d6d4e, #a8a878)' },
+      { name: 'Plante', color: 'linear-gradient(45deg, #4e8234, #78c850)' },
+      { name: 'Poison', color: 'linear-gradient(45deg, #5d1a5d, #a040a0)' },
+      { name: 'Psy', color: 'linear-gradient(45deg, #a13959, #f85888)' },
+      { name: 'Roche', color: 'linear-gradient(45deg, #786824, #b8a038)' },
+      { name: 'Sol', color: 'linear-gradient(45deg, #927d44, #e0c068)' },
+      { name: 'Spectre', color: 'linear-gradient(45deg, #4b3b67, #705898)' },
+      { name: 'Ténèbres', color: 'linear-gradient(45deg, #49392f, #705848)' },
+      { name: 'Vol', color: 'linear-gradient(45deg, #6d5eb7, #a890f0)' }
+    ];
 
     for (const type of types) {
       await Type.findOrCreate({
@@ -421,15 +418,60 @@ const types = [
     }
 
     const teams = [
-      { name: 'La Team Rocket', description: 'une organisation criminelle dans le monde Pokémon, dirigée par Giovanni. Leur objectif est de capturer des Pokémon pour des gains financiers et pour aider Giovanni à réaliser ses ambitions de domination.' },
-      { name: 'Team Ash', description: 'L\'équipe de Pokémon de Sacha, composée de Pikachu et d\'autres Pokémon qu\'il capture lors de ses voyages pour devenir Maître Pokémon.' },
-  { name: 'Team Plasma', description: 'Une organisation qui prône la libération des Pokémon des mains des dresseurs, affirmant que les Pokémon doivent être libres.' }
+      {
+        name: 'La Team Rocket',
+        description: 'Une organisation criminelle dans le monde Pokémon, dirigée par Giovanni. Leur objectif est de capturer des Pokémon pour des gains financiers et pour aider Giovanni à réaliser ses ambitions de domination.'
+      },
+      {
+        name: 'Team Ash',
+        description: 'L\'équipe de Pokémon de Sacha, composée de Pikachu et d\'autres Pokémon qu\'il capture lors de ses voyages pour devenir Maître Pokémon.'
+      },
+      {
+        name: 'Team Plasma',
+        description: 'Une organisation qui prône la libération des Pokémon des mains des dresseurs, affirmant que les Pokémon doivent être libres.'
+      },
+      {
+        name: 'La Team de William',
+        description: 'Une équipe redoutable composée des meilleurs Pokémon de William.'
+      }
     ];
 
+    const createdTeams = [];
     for (const team of teams) {
-      await Team.create(team);
+      const createdTeam = await Team.create(team);
+      createdTeams.push(createdTeam);
     }
-    
+
+    const teamPokemons = [
+      // La Team Rocket
+      { team_id: createdTeams[0].id, pokemon_id: 23 }, 
+      { team_id: createdTeams[0].id, pokemon_id: 24 }, 
+      { team_id: createdTeams[0].id, pokemon_id: 52 }, 
+      { team_id: createdTeams[0].id, pokemon_id: 53 }, 
+      { team_id: createdTeams[0].id, pokemon_id: 110 }, 
+      // Team Ash
+      { team_id: createdTeams[1].id, pokemon_id: 25 }, 
+      { team_id: createdTeams[1].id, pokemon_id: 6 },  
+      { team_id: createdTeams[1].id, pokemon_id: 9 },  
+      { team_id: createdTeams[1].id, pokemon_id: 130 }, 
+      { team_id: createdTeams[1].id, pokemon_id: 143 }, 
+      // Team Plasma
+      { team_id: createdTeams[2].id, pokemon_id: 52 }, 
+      { team_id: createdTeams[2].id, pokemon_id: 89 }, 
+      { team_id: createdTeams[2].id, pokemon_id: 105 }, 
+      { team_id: createdTeams[2].id, pokemon_id: 149 }, 
+      { team_id: createdTeams[2].id, pokemon_id: 150 }, 
+      // La Team de William
+      { team_id: createdTeams[3].id, pokemon_id: 6 },  
+      { team_id: createdTeams[3].id, pokemon_id: 7 },  
+      { team_id: createdTeams[3].id, pokemon_id: 130 }, 
+      { team_id: createdTeams[3].id, pokemon_id: 143 }, 
+      { team_id: createdTeams[3].id, pokemon_id: 150 }, 
+    ];
+
+    for (const teamPokemon of teamPokemons) {
+      await TeamPokemon.create(teamPokemon);
+    }
 
     console.log('Database seeded!');
   } catch (error) {

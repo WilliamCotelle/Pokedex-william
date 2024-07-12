@@ -199,13 +199,11 @@ const openAddTeamModal = async () => {
     showModal('teamModal');
 };
 
-
 // Fonction pour fermer la modal des équipes
 const closeTeamModal = () => {
     closeModal('teamModal');
 };
 
-// Fonction pour afficher les détails de l'équipe dans une modal
 // Fonction pour afficher les détails de l'équipe dans une modal
 const openTeamDetailModal = async (teamId) => {
     try {
@@ -217,6 +215,10 @@ const openTeamDetailModal = async (teamId) => {
         modalTitle.textContent = team.name;
         modalDescription.textContent = team.description;
         pokemonList.innerHTML = ''; // Clear previous list
+
+        // const pokemonsTitle = document.createElement('h3');
+        // pokemonsTitle.textContent = 'Pokémons de la team';
+        // pokemonList.appendChild(pokemonsTitle);
 
         for (const pokemon of team.Pokemons) {
             const pokemonImg = document.createElement('img');
@@ -231,8 +233,6 @@ const openTeamDetailModal = async (teamId) => {
         console.log('Error fetching team details:', error);
     }
 };
-
-
 
 // Fonction pour sélectionner les détails d'une équipe
 const fetchTeamDetails = async (teamId) => {
@@ -275,7 +275,7 @@ const addTeam = async (teamName, teamDescription, pokemons) => {
     }
 };
 
-// Fonction pour gérer la soumission du formulaire de création d'équipe// Fonction pour gérer la soumission du formulaire de création d'équipe
+// Fonction pour gérer la soumission du formulaire de création d'équipe
 const handleTeamFormSubmit = async (event) => {
     event.preventDefault();
     const teamName = document.getElementById('teamName').value;
@@ -288,8 +288,6 @@ const handleTeamFormSubmit = async (event) => {
     closeTeamModal();
     document.getElementById('teamForm').reset();
 };
-
-
 
 //écouteur d'événement pour le formulaire de création d'équipe
 document.getElementById('teamForm').addEventListener('submit', handleTeamFormSubmit);
@@ -501,7 +499,6 @@ const populateTeamPokemonSelects = async () => {
         pokemonSelectsContainer.appendChild(select);
     }
 };
-
 
 // Attendre que le document soit prêt
 document.addEventListener("DOMContentLoaded", async () => {
