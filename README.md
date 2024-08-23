@@ -1,25 +1,31 @@
-# S14-Pokedex
+# Pokedex App
 
+Bienvenue dans le **Pokedex App**, une application conçue pour explorer les Pokémon et obtenir des informations détaillées à leur sujet.
 
-## Structure du projet : 
+## Stack Technologique
 
-### Dossier back : 
+- **Backend** :
 
-- Un dossier data qui contient les fichiers sql :
-    - create_tables.sql : permet de créer les tables de la bases de données
-    - seeding_tables.sql : permet de remplir les tables avec les données
-- .env.example : nos variables d'environnement.
-- package.json : contient nos dependances & les scripts (que vous devrez faire en vous inspirant des projets précédents.)
+  - **Node.js** : Utilisé pour créer le serveur backend.
+  - **Express** : Framework pour construire l'API RESTful.
+  - **PostgreSQL** : Base de données relationnelle pour stocker les données des Pokémon.
+  - **Sequelize** : ORM pour interagir avec la base de données PostgreSQL.
+  - **Dotenv** : Pour la gestion des variables d'environnement.
 
-### Dossier docs : 
+- **Frontend** :
+  - **React** : Bibliothèque JavaScript pour la construction d'interfaces utilisateur interactives.
 
-- endpoints.md : contient la liste des routes qui devront être faites dans l'api
-- installation.md : contient une courte série d'instruction pour lancer le projet. 
-- roadmap.md : contient les attendus du projet sous forme de user-stories.
+## Fonctionnalités
 
-### Dossier front : 
+- **Affichage de la Liste des Pokémon** :
+  - Visualisez une liste complète des Pokémon avec des informations de base comme le nom et le type.
+- **Détails des Pokémon** :
+  - Cliquez sur un Pokémon pour obtenir des informations détaillées, y compris les statistiques, les capacités et plus encore.
+- **Recherche par Nom ou Type** :
 
-- Un dossier assets qui contient : 
-  - icons : un dossier dans lequel stocker vos icons perso svg (contient déjà une pokeball)
-  - img : contient les images des pokemons, les images portent le nom du numero du pokemon (<numero>.webp)
-- Un index.html avec un début de structure que vous êtes libre d'adapter.
+  - Recherchez des Pokémon spécifiques par nom ou filtrez-les par type.
+
+- **Gestion de la Base de Données** :
+  - Le backend gère une base de données PostgreSQL, permettant de stocker et récupérer les informations des Pokémon.
+- **Population Automatique de la Base de Données** :
+  - Utilisation de la fonctionnalité de seeding pour peupler automatiquement la base de données avec des données initiales.
